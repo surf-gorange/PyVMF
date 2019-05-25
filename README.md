@@ -8,4 +8,4 @@ obscure entities. This allows you to create insanely complex geometry through py
 
 Surf Ramp | Wavy Displacement | Bhop Hell
 :--------:|:-----------------:|:-------------------------------:
-<img width=35% height=35% src="https://i.imgur.com/xfNlWCX.png"> | <img width=35% height=35% src="https://i.imgur.com/rn2e1bC.png"> | <img width=35% height=35% src="https://i.imgur.com/bBzmFZt.png">
+<img width=100% height=100% src="https://i.imgur.com/xfNlWCX.png"> | <img width=100% height=100% src="https://i.imgur.com/rn2e1bC.png"> | <img width=100% height=100% src="https://i.imgur.com/bBzmFZt.png">
