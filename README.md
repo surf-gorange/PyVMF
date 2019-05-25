@@ -7,7 +7,5 @@ This projects turns the VMF into python classes, and allows you to modify pretty
 obscure entities. This allows you to create insanely complex geometry through python code, see images below.
 
 <img width=35% height=35% src="https://i.imgur.com/xfNlWCX.png">
-
 <img width=35% height=35% src="https://i.imgur.com/rn2e1bC.png">
-
 <img width=35% height=35% src="https://i.imgur.com/bBzmFZt.png">
