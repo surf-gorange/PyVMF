@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="d65a32d1-3c79-46a0-9c9f-e081fb74648e" name="Default" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="VMFAPI" />
+  </component>
+  <component name="FileEditorManager">
+    <splitter split-orientation="horizontal" split-proportion="0.5">
+      <split-first>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file leaf-file-name="PyVMF.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/PyVMF.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="307">
+                  <caret line="805" column="0" lean-forward="true" selection-start-line="805" selection-start-column="0" selection-end-line="805" selection-end-column="0" />
+                  <folding>
+                    <element signature="e#0#9#0" expanded="true" />
+                    <element signature="e#179#322#0" expanded="false" />
+                    <element signature="e#438#2097#0" expanded="false" />
+                    <element signature="e#2127#3414#0" expanded="false" />
+                    <element signature="e#3435#3742#0" expanded="false" />
+                    <element signature="e#3776#4228#0" expanded="false" />
+                    <element signature="e#4260#4729#0" expanded="false" />
+                    <element signature="e#4760#5299#0" expanded="false" />
+                    <element signature="e#5334#5799#0" expanded="false" />
+                    <element signature="e#5827#7011#0" expanded="false" />
+                    <element signature="e#7113#8963#0" expanded="false" />
+                    <element signature="e#8991#11493#0" expanded="false" />
+                    <element signature="e#11522#12926#0" expanded="false" />
+                    <element signature="e#12954#13322#0" expanded="false" />
+                    <element signature="e#13349#15055#0" expanded="false" />
+                    <element signature="e#15086#16882#0" expanded="false" />
+                    <element signature="e#16913#17430#0" expanded="false" />
+                    <element signature="e#17464#17587#0" expanded="false" />
+                    <element signature="e#17616#18687#0" expanded="false" />
+                    <element signature="e#18717#19342#0" expanded="false" />
+                    <element signature="e#19374#19713#0" expanded="false" />
+                    <element signature="e#19743#20374#0" expanded="false" />
+                    <element signature="e#20410#21076#0" expanded="false" />
+                    <element signature="e#21105#21435#0" expanded="false" />
+                    <element signature="e#21470#22085#0" expanded="false" />
+                    <element signature="e#22120#22242#0" expanded="false" />
+                    <element signature="e#22271#22563#0" expanded="false" />
+                    <element signature="e#22592#23080#0" expanded="false" />
+                    <element signature="e#23109#24061#0" expanded="false" />
+                    <element signature="e#24095#24207#0" expanded="false" />
+                    <element signature="e#24237#24599#0" expanded="false" />
+                    <element signature="e#24628#24856#0" expanded="false" />
+                    <element signature="e#24886#25245#0" expanded="false" />
+                    <element signature="e#25274#25659#0" expanded="false" />
+                    <element signature="e#25685#25898#0" expanded="false" />
+                    <element signature="e#25916#33219#0" expanded="false" />
+                    <element signature="e#33246#33511#0" expanded="false" />
+                    <element signature="e#33532#33573#0" expanded="false" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file leaf-file-name="PyVMF.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/PyVMF.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="602">
+                  <caret line="1068" column="12" lean-forward="false" selection-start-line="1068" selection-start-column="12" selection-end-line="1068" selection-end-column="12" />
+                  <folding>
+                    <element signature="e#0#9#0" expanded="true" />
+                    <element signature="e#179#322#0" expanded="false" />
+                    <element signature="e#438#2097#0" expanded="false" />
+                    <element signature="e#2127#3414#0" expanded="false" />
+                    <element signature="e#3435#3742#0" expanded="false" />
+                    <element signature="e#3776#4228#0" expanded="false" />
+                    <element signature="e#4260#4729#0" expanded="false" />
+                    <element signature="e#4760#5299#0" expanded="false" />
+                    <element signature="e#5334#5799#0" expanded="false" />
+                    <element signature="e#5827#7011#0" expanded="false" />
+                    <element signature="e#7113#8963#0" expanded="false" />
+                    <element signature="e#8991#11493#0" expanded="false" />
+                    <element signature="e#11522#12926#0" expanded="false" />
+                    <element signature="e#12954#13322#0" expanded="false" />
+                    <element signature="e#13349#15055#0" expanded="false" />
+                    <element signature="e#15086#16882#0" expanded="false" />
+                    <element signature="e#16913#17430#0" expanded="false" />
+                    <element signature="e#17464#17587#0" expanded="false" />
+                    <element signature="e#17616#18687#0" expanded="false" />
+                    <element signature="e#18717#19342#0" expanded="false" />
+                    <element signature="e#19374#19713#0" expanded="false" />
+                    <element signature="e#19743#20374#0" expanded="false" />
+                    <element signature="e#20410#21076#0" expanded="false" />
+                    <element signature="e#21105#21435#0" expanded="false" />
+                    <element signature="e#21470#22085#0" expanded="false" />
+                    <element signature="e#22120#22242#0" expanded="false" />
+                    <element signature="e#22271#22563#0" expanded="false" />
+                    <element signature="e#22592#23080#0" expanded="false" />
+                    <element signature="e#23109#24061#0" expanded="false" />
+                    <element signature="e#24095#24207#0" expanded="false" />
+                    <element signature="e#24237#24599#0" expanded="false" />
+                    <element signature="e#24886#25245#0" expanded="false" />
+                    <element signature="e#25274#25659#0" expanded="false" />
+                    <element signature="e#25685#25898#0" expanded="false" />
+                    <element signature="e#25916#33219#0" expanded="false" />
+                    <element signature="e#33246#33511#0" expanded="false" />
+                    <element signature="e#33532#33573#0" expanded="false" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>last_l</find>
+      <find>logicalpos</find>
+      <find>classes</find>
+      <find>AD</find>
+      <find>print</find>
+      <find>current_child</find>
+      <find>export_str</find>
+      <find>hidden</find>
+      <find>terr</find>
+      <find>terror</find>
+      <find>,</find>
+      <find>dispinfo</find>
+      <find>copy</find>
+      <find>-&gt;</find>
+      <find>disp</find>
+      <find>parent_type</find>
+      <find>self.__a_var</find>
+      <find>extract_dic</find>
+      <find>matrix.export</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>:</replace>
+      <replace>a_var</replace>
+      <replace>_extract_dic</replace>
+      <replace>matrix._export</replace>
+    </replaceStrings>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/test" />
+        <option value="$PROJECT_DIR$/example.vmf" />
+        <option value="$PROJECT_DIR$/test2.vmf" />
+        <option value="$PROJECT_DIR$/test.vmf" />
+        <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/script/test.vmf" />
+        <option value="$PROJECT_DIR$/script/test2.vmf" />
+        <option value="$PROJECT_DIR$/script/PyVMF.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-13" />
+    <option name="y" value="-16" />
+    <option name="width" value="1280" />
+    <option name="height" value="773" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>General</id>
+          </State>
+          <State>
+            <id>Internationalization issues</id>
+          </State>
+          <State>
+            <id>Python</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>PyCompatibilityInspection</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="PyVMF" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PyVMF" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../GorangeTools" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Useful\PycharmProjects\PyVMF" />
+      <recent name="D:\Useful\PycharmProjects\PyVMF\script" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.PyVMF">
+    <configuration name="PyVMF" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/script" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="PyVMF" />
+      <option name="SCRIPT_NAME" value="D:\Useful\PycharmProjects\PyVMF\PyVMF.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\Noah\venv\PyVMF\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="PyVMF" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="true" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Nosetests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="VMFAPI" />
+      <option name="_new_regexPattern" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Twisted Trial">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="VMFAPI" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Unittests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="VMFAPI" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="py.test">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="VMFAPI" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+    </configuration>
+    <list size="2">
+      <item index="0" class="java.lang.String" itemvalue="Python.main" />
+      <item index="1" class="java.lang.String" itemvalue="Python.PyVMF" />
+    </list>
+    <recent_temporary>
+      <list size="2">
+        <item index="0" class="java.lang.String" itemvalue="Python.PyVMF" />
+        <item index="1" class="java.lang.String" itemvalue="Python.main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d65a32d1-3c79-46a0-9c9f-e081fb74648e" name="Default" comment="" />
+      <created>1556785666232</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1556785666232</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.087987356" sideWeight="0.4945946" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29673913" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18913044" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.087987356" sideWeight="0.5054054" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <option name="time" value="20" />
+    </breakpoint-manager>
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/main.py" />
+    <entry file="file://$PROJECT_DIR$/surf_homestead.vmf" />
+    <entry file="file://$PROJECT_DIR$/Orthodox_Bonus.vmf" />
+    <entry file="file://$PROJECT_DIR$/example.vmf" />
+    <entry file="file://$PROJECT_DIR$/test.vmf" />
+    <entry file="file://$PROJECT_DIR$/test2.vmf" />
+    <entry file="file://$PROJECT_DIR$/main.py" />
+    <entry file="file://$PROJECT_DIR$/Orthodox_Bonus.vmf" />
+    <entry file="file://$PROJECT_DIR$/example.vmf" />
+    <entry file="file://$PROJECT_DIR$/test2.vmf" />
+    <entry file="file://$PROJECT_DIR$/test.vmf" />
+    <entry file="file://$PROJECT_DIR$/main.py" />
+    <entry file="file://$PROJECT_DIR$/Orthodox_Bonus.vmf" />
+    <entry file="file://$PROJECT_DIR$/example.vmf" />
+    <entry file="file://$PROJECT_DIR$/test2.vmf" />
+    <entry file="file://$PROJECT_DIR$/test.vmf" />
+    <entry file="file://$PROJECT_DIR$/main.py" />
+    <entry file="file://$PROJECT_DIR$/Orthodox_Bonus.vmf" />
+    <entry file="file://$PROJECT_DIR$/example.vmf" />
+    <entry file="file://$PROJECT_DIR$/test.vmf" />
+    <entry file="file://$PROJECT_DIR$/test2.vmf" />
+    <entry file="file://$PROJECT_DIR$/main.py" />
+    <entry file="file://$PROJECT_DIR$/Orthodox_Bonus.vmf" />
+    <entry file="file://$PROJECT_DIR$/example.vmf" />
+    <entry file="file://$PROJECT_DIR$/test.vmf" />
+    <entry file="file://$PROJECT_DIR$/test2.vmf" />
+    <entry file="file://$PROJECT_DIR$/main.py" />
+    <entry file="file://$PROJECT_DIR$/example.vmf" />
+    <entry file="file://$PROJECT_DIR$/main.py" />
+    <entry file="file://$PROJECT_DIR$/example.vmf" />
+    <entry file="file://$PROJECT_DIR$/test" />
+    <entry file="file://$PROJECT_DIR$/surf_grid.vmf" />
+    <entry file="file://$PROJECT_DIR$/example.vmf" />
+    <entry file="file://$PROJECT_DIR$/de_vertigo_custom.vmf" />
+    <entry file="file://$PROJECT_DIR$/surf_modem.vmf" />
+    <entry file="file://$PROJECT_DIR$/Orthodox_Bonus.vmf" />
+    <entry file="file://$PROJECT_DIR$/surf_homestead.vmf" />
+    <entry file="file://$USER_HOME$/venv/VMFAPI2/Lib/site-packages/vispy/scene/visuals.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="227">
+          <caret line="232" column="39" lean-forward="false" selection-start-line="232" selection-start-column="39" selection-end-line="232" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/venv/VMFAPI2/Lib/site-packages/vispy/visuals/cube.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="11" column="6" lean-forward="false" selection-start-line="11" selection-start-column="6" selection-end-line="11" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2017.3/system/python_stubs/-872787075/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-181">
+          <caret line="5280" column="8" lean-forward="false" selection-start-line="5280" selection-start-column="8" selection-end-line="5280" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/venv/VMFAPI4/Lib/site-packages/vpython/vpython.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2830">
+          <caret line="2752" column="8" lean-forward="false" selection-start-line="2752" selection-start-column="8" selection-end-line="2752" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/de_dust2_custom.vmf" />
+    <entry file="file://$PROJECT_DIR$/surf_realm.vmf" />
+    <entry file="file://$PROJECT_DIR$/test2.vmf" />
+    <entry file="file://$PROJECT_DIR$/main.py" />
+    <entry file="file://$PROJECT_DIR$/test.vmf" />
+    <entry file="file://$PROJECT_DIR$/script/sdk_de_cbble.vmf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="36" column="25" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="250844" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/script/test.vmf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1240">
+          <caret line="100" column="26" lean-forward="true" selection-start-line="100" selection-start-column="26" selection-end-line="100" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2017.3/system/python_stubs/1147897120/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="982" column="0" lean-forward="false" selection-start-line="982" selection-start-column="0" selection-end-line="982" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/script/test2.vmf">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="1" lean-forward="true" selection-start-line="10" selection-start-column="1" selection-end-line="10" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PyVMF.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="307">
+          <caret line="805" column="0" lean-forward="true" selection-start-line="805" selection-start-column="0" selection-end-line="805" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+            <element signature="e#179#322#0" expanded="false" />
+            <element signature="e#438#2097#0" expanded="false" />
+            <element signature="e#2127#3414#0" expanded="false" />
+            <element signature="e#3435#3742#0" expanded="false" />
+            <element signature="e#3776#4228#0" expanded="false" />
+            <element signature="e#4260#4729#0" expanded="false" />
+            <element signature="e#4760#5299#0" expanded="false" />
+            <element signature="e#5334#5799#0" expanded="false" />
+            <element signature="e#5827#7011#0" expanded="false" />
+            <element signature="e#7113#8963#0" expanded="false" />
+            <element signature="e#8991#11493#0" expanded="false" />
+            <element signature="e#11522#12926#0" expanded="false" />
+            <element signature="e#12954#13322#0" expanded="false" />
+            <element signature="e#13349#15055#0" expanded="false" />
+            <element signature="e#15086#16882#0" expanded="false" />
+            <element signature="e#16913#17430#0" expanded="false" />
+            <element signature="e#17464#17587#0" expanded="false" />
+            <element signature="e#17616#18687#0" expanded="false" />
+            <element signature="e#18717#19342#0" expanded="false" />
+            <element signature="e#19374#19713#0" expanded="false" />
+            <element signature="e#19743#20374#0" expanded="false" />
+            <element signature="e#20410#21076#0" expanded="false" />
+            <element signature="e#21105#21435#0" expanded="false" />
+            <element signature="e#21470#22085#0" expanded="false" />
+            <element signature="e#22120#22242#0" expanded="false" />
+            <element signature="e#22271#22563#0" expanded="false" />
+            <element signature="e#22592#23080#0" expanded="false" />
+            <element signature="e#23109#24061#0" expanded="false" />
+            <element signature="e#24095#24207#0" expanded="false" />
+            <element signature="e#24237#24599#0" expanded="false" />
+            <element signature="e#24628#24856#0" expanded="false" />
+            <element signature="e#24886#25245#0" expanded="false" />
+            <element signature="e#25274#25659#0" expanded="false" />
+            <element signature="e#25685#25898#0" expanded="false" />
+            <element signature="e#25916#33219#0" expanded="false" />
+            <element signature="e#33246#33511#0" expanded="false" />
+            <element signature="e#33532#33573#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
