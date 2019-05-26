@@ -10,18 +10,8 @@ Surf Ramp | Wavy Displacement | Bhop Hell
 :--------:|:-----------------:|:-------------------------------:
 <img width=100% height=20% src="https://i.imgur.com/xfNlWCX.png"> | <img width=100% height=20% src="https://i.imgur.com/rn2e1bC.png"> | <img width=100% height=20% src="https://i.imgur.com/bBzmFZt.png">
 
-# Installation:
+# Usage
 
-You can either use pip:
-
-```
-pip install pyvmf
-```
-
-or add ```PyVMF.py``` to your project directory.
-
-# License:
-
-Todo
+Check out the wiki for more information: https://github.com/GorangeNinja/PyVMF/wiki/Getting-Started
 
 
