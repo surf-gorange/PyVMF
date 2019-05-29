@@ -294,14 +294,19 @@ class Solid(Common):
         for vert in self.get_all_vertices():
             vert.rotate_z(center, angle)
 
+    def scale(self, center, x, y, z):
+        for vertex in self.get_all_vertices():
+            diff = vertex.diff(center)
+            fixed_diff = (diff[0]*x, diff[1]*y, diff[2]*z)
+            vertex.move(*fixed_diff)
+
     @property
     def center(self):
         v = Vertex(0, 0, 0)
-        counter = 0
-        for vert in self.get_only_unique_vertices():
+        vert_list = self.get_only_unique_vertices()
+        for vert in vert_list:
             v = v + vert
-            counter += 1
-        v.divide(counter)
+        v.divide(len(vert_list))
         return v
 
     @center.setter
@@ -327,6 +332,17 @@ class Solid(Common):
                     l.append(side)
         return l
 
+    def get_texture_sides(self, name:str, exact=False) -> bool:
+        l = []
+        for side in self.side:
+            if not exact:
+                if name.upper() in side.material:
+                    l.append(side)
+            else:
+                if side.material == name.upper():
+                    l.append(side)
+        return l
+
     def get_only_unique_vertices(self):
         vertex_list = []
         for side in self.side:
@@ -336,10 +352,14 @@ class Solid(Common):
 
         return vertex_list
 
-    def has_texture(self, name:str) -> bool:
+    def has_texture(self, name:str, exact=False) -> bool:
         for side in self.side:
-            if side.material == name.upper():
-                return True
+            if not exact:
+                if name.upper() in side.material:
+                    return True
+            else:
+                if side.material == name.upper():
+                    return True
         return False
 
     def replace_texture(self, old_material:str, new_material:str):
@@ -436,6 +456,10 @@ class Side(Common):
         for child in children:
             if str(child) == DispInfo.NAME:
                 self.dispinfo = DispInfo(child.dic, child.children)
+
+    def move(self, x, y, z):
+        for vertex in self.plane:
+            vertex.move(x, y, z)
 
     def get_vertices(self):
         return self.plane
@@ -917,6 +941,13 @@ class VMF:
                     l.append(item)
 
         return l
+
+    def get_group_center(self, group:list):
+        v = Vertex(0, 0, 0)
+        for solid in group:
+            v = v + solid.center
+        v.divide(len(group))
+        return v
 
     def sort_by_attribute(self, category_list:list, attr:str):
         return sorted(category_list, key=operator.attrgetter(attr))
