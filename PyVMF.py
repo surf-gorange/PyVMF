@@ -4,6 +4,7 @@ import sys
 import time
 import math
 import operator
+#import pywavefront
 
 
 def num(s):  # Tries to turn string into int, then float, if all fails returns string
@@ -89,7 +90,39 @@ def file_parser(file):
     return extracted  # This is used when creating a VMT class
 
 
+# def obj_to_solids(filename):
+#     scene = pywavefront.Wavefront(filename, collect_faces=False)
+#     for mesh in scene.meshes.values():
+#         yield coordinates_to_solid(mesh.untouched_faces)
+#
+#
+# def coordinates_to_solid(coordinate_list):
+#     s = Solid()
+#     s.editor = Editor()
+#     p = 1
+#     for face in coordinate_list:
+#         verts = ""
+#         for vert in face:
+#             verts+="("
+#             for xyz in vert:
+#                 verts += " "
+#                 verts += str(xyz)
+#             verts+=")"
+#
+#         f = Side({"id":p,
+#                   "plane":verts,
+#                   "uaxis":"[1 0 0 0] 0.5",
+#                   "vaxis":"[0 -1 0 0] 0.5"})
+#         p += 1
+#
+#         s.side.append(f)
+#     return s
+
+
+
+
 class Common:
+    ID = 0
     def export(self):
         d = {}
         for item in self.export_list:
@@ -102,6 +135,10 @@ class Common:
     def copy(self):
         """Copies a category using the copy.deepcopy function"""
         return deepcopy(self)
+
+    def ids(self):
+        Common.ID += 1
+        return Common.ID
 
 
 class VersionInfo(Common):
@@ -172,7 +209,7 @@ class ViewSettings(Common):
 class World(Common):
     NAME = "world"
     def __init__(self, dic:dict={}, children=[]):
-        self.id = dic.pop("id", 1)
+        self.id = dic.pop("id", self.ids())
         self.mapversion = dic.pop("mapversion", 1)
         self.classname = dic.pop("classname", "worldspawn")
         self.detailmaterial = dic.pop("detailmaterial", "detail/detailsprites")
@@ -207,6 +244,8 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
         self.y = y
         self.z = z
 
+        self.sorting = 0  # Used in solid get_3d_extremity
+
     def __str__(self):
         return f"{self.x} {self.y} {self.z}"
 
@@ -222,6 +261,11 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
         self.x /= amount
         self.y /= amount
         self.z /= amount
+
+    def divide_separate(self, x, y, z):
+        self.x /= x
+        self.y /= y
+        self.z /= z
 
     def diff(self, other):
         return self.x - other.x, self.y - other.y, self.z - other.z
@@ -254,6 +298,19 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
         new_z = center.z + (self.y - center.y) * math.sin(angle) + (self.z - center.z) * math.cos(angle)
         self.set(self.x, new_y, new_z)
 
+    def flip(self, x=None, y=None, z=None):
+        if x is not None:
+            self.x += 2 * (x - self.x)
+        if y is not None:
+            self.y += 2 * (y - self.y)
+        if z is not None:
+            self.z += 2 * (z - self.z)
+
+    def align_to_grid(self):
+        self.x = int(self.x)
+        self.y = int(self.y)
+        self.z = int(self.z)
+
     def export(self):
         return (self.x,
                 self.y,
@@ -263,7 +320,7 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
 class Solid(Common):
     NAME = "solid"
     def __init__(self, dic:dict={}, children=[]):
-        self.id = dic.pop("id", 1)
+        self.id = dic.pop("id", self.ids())
 
         self.other = dic
         self.export_list = ["id"]
@@ -283,18 +340,25 @@ class Solid(Common):
                 vert.move(x, y, z)
 
     def rotate_x(self, center, angle):
-        for vert in self.get_all_vertices():
-            vert.rotate_x(center, angle)
+        for side in self.side:
+            side.rotate_x(center, angle)
 
     def rotate_y(self, center, angle):
-        for vert in self.get_all_vertices():
-            vert.rotate_y(center, angle)
+        for side in self.side:
+            side.rotate_y(center, angle)
 
     def rotate_z(self, center, angle):
-        for vert in self.get_all_vertices():
-            vert.rotate_z(center, angle)
+        for side in self.side:
+            side.rotate_z(center, angle)
 
-    def scale(self, center, x, y, z):
+    def flip(self, x=None, y=None, z=None):
+        for vert in self.get_all_vertices():
+            vert.flip(x, y, z)
+
+    def scale(self, center, x=1.0, y=1.0, z=1.0):
+        x -= 1
+        y -= 1
+        z -= 1
         for vertex in self.get_all_vertices():
             diff = vertex.diff(center)
             fixed_diff = (diff[0]*x, diff[1]*y, diff[2]*z)
@@ -313,6 +377,73 @@ class Solid(Common):
     def center(self, vertex):
         self.move(*vertex.diff(self.center))
 
+    @property
+    def center_geo(self):
+        v = Vertex(0, 0, 0)
+
+        x = self.get_axis_extremity(x=False).x
+        y = self.get_axis_extremity(y=False).y
+        z = self.get_axis_extremity(z=False).z
+
+        size = self.get_size()
+        size.divide(2)
+
+        v.set(x, y, z)
+        v.move(*size.export())
+
+        return v
+
+
+    def get_axis_extremity(self, x:bool=None, y:bool=None, z:bool=None):
+        verts = self.get_only_unique_vertices()
+
+        if x is not None:
+            lx = sorted(verts, key=operator.attrgetter("x"))
+            return lx[int(not x)-1]
+
+        elif y is not None:
+            ly = sorted(verts, key=operator.attrgetter("y"))
+            return ly[int(not y)-1]
+
+        elif z is not None:
+            lz = sorted(verts, key=operator.attrgetter("z"))
+            return lz[int(not z)-1]
+
+        raise ValueError("No axis given")
+
+    def get_3d_extremity(self, x:bool=None, y:bool=None, z:bool=None):
+        verts = self.get_only_unique_vertices()
+
+        for vert in verts:
+            vert.sorting = 0
+            if x is not None:
+                if x:
+                    vert.sorting += vert.x
+                else:
+                    vert.sorting -= vert.x
+            if y is not None:
+                if y:
+                    vert.sorting += vert.y
+                else:
+                    vert.sorting -= vert.y
+            if z is not None:
+                if z:
+                    vert.sorting += vert.z
+                else:
+                    vert.sorting -= vert.z
+
+        sort = sorted(verts, key=operator.attrgetter("sorting"))
+        best = sort[-1]
+
+        ties = []
+        for vert in sort:
+            if vert.sorting == best.sorting:
+                ties.append(vert)
+
+        return best, ties
+
+
+
     def get_all_vertices(self):
         vertex_list = []
         for side in self.side:
@@ -321,6 +452,18 @@ class Solid(Common):
 
     def get_sides(self):
         return self.side
+
+    def get_size(self) -> Vertex:
+        x = []
+        y = []
+        z = []
+        for vert in self.get_all_vertices():
+            x.append(vert.x)
+            y.append(vert.y)
+            z.append(vert.z)
+
+        return Vertex(max(x) - min(x), max(y) - min(y), max(z) - min(z))
+
 
     def get_displacement_sides(self, matrix_instead_of_side=False):
         l = []
@@ -366,6 +509,41 @@ class Solid(Common):
         for side in self.side:
             if side.material == old_material:
                 side.material = new_material
+
+    def naive_subdivide(self, x=1, y=1, z=1) -> list:
+        l = []
+
+        s = self.copy()
+
+        half_size = s.get_size()
+        half_size.divide(2)
+
+        ratio = (1/x, 1/y, 1/z)
+
+        s.scale(s.center, *ratio)
+
+        move_amount = s.get_size()
+
+        s.move(-half_size.x, half_size.y, half_size.z)
+        s.move(move_amount.x/2, -move_amount.y/2, -move_amount.z/2)
+
+        for iz in range(z):
+            for iy in range(y):
+                for ix in range(x):
+                    s2 = s.copy()
+                    s2.move(ix * move_amount.x, -iy * move_amount.y, -iz * move_amount.z)
+                    l.append(s2)
+
+        return l
+
+    def is_simple_solid(self) -> bool:
+        if len(self.side) <= 6:
+            return True
+        return False
+
+    def remove_all_displacements(self):
+        for side in self.side:
+            side.remove_displacement()
 
     def export_children(self):
         return (*self.side, self.editor)
@@ -418,7 +596,7 @@ class Editor(Common):
 class Group(Common):
     NAME = "group"
     def __init__(self, dic:dict={}, children=[]):
-        self.id =dic.pop("id", 1)
+        self.id =dic.pop("id", self.ids())
 
         self.other = dic
         self.export_list = ["id"]
@@ -435,7 +613,7 @@ class Group(Common):
 class Side(Common):
     NAME = "side"
     def __init__(self, dic:dict={}, children=[]):
-        self.id = dic.pop("id", 1)
+        self.id = dic.pop("id", self.ids())
 
         t = self._string_to_3x_vertex(dic.pop("plane"))
         self.plane = (Vertex(t[0], t[1], t[2]),
@@ -461,11 +639,36 @@ class Side(Common):
         for vertex in self.plane:
             vertex.move(x, y, z)
 
+    def rotate_x(self, center, angle):
+        for vert in self.plane:
+            vert.rotate_x(center, angle)
+
+    def rotate_y(self, center, angle):
+        for vert in self.plane:
+            vert.rotate_y(center, angle)
+
+    def rotate_z(self, center, angle):
+        for vert in self.plane:
+            vert.rotate_z(center, angle)
+
+    def flip(self, x=None, y=None, z=None):
+        raise ValueError("The flip function doesn't currently work")
+        for vert in self.plane:
+            vert.flip(x, y, z)
+
     def get_vertices(self):
         return self.plane
 
     def get_displacement(self):
         return self.dispinfo
+
+    def get_vector(self):
+        v = self.plane[0].copy()
+        for vert in self.plane[1:]:
+            v = v + vert
+
+    def remove_displacement(self):
+        self.dispinfo = None
 
     def _string_to_3x_vertex(self, string):
         reg = re.sub('[(){}<>]', '', string).split()
@@ -503,9 +706,21 @@ class DispInfo(Common):
         self.subdiv = dic.pop("subdiv", 0)
 
         fix = 0
+        self.size = 0
+        self.matrix_size_fix = 0
+
         if self.power == 2 or self.power == 4:
             fix = 1
-        self.matrix = Matrix(self.power**2+fix)
+            self.matrix_size_fix = self.power**2
+            self.size = self.matrix_size_fix + fix
+        else:
+            self.size = self.power**2
+            self.matrix_size_fix = self.size - 1
+
+
+        self.matrix = Matrix(self.size)
+
+
 
         self.other = dic
         self.export_list = ["power", "startposition", "flags", "elevation", "subdiv"]
@@ -584,6 +799,14 @@ class Matrix(Common):
         for x in range(self.size):
             l.append(self.matrix[x][y])
         return l
+
+    def column(self, x):
+        return self.matrix[x]
+
+    def rect(self, x, y, w, h):
+        for y2 in range(y, y + h):
+            for x2 in range(x, x + w):
+                yield x2, y2, self.get(x2, y2)
 
     def _extract_dic(self, dic, a_var=1, triangle=False):
         for y in range(self.size - triangle):
@@ -733,19 +956,49 @@ class AllowedVerts(Common):
 
 
 class UVaxis(Common):
-    def __init__(self, x, y, z, dec, dec2):
+    def __init__(self, x, y, z, offset, scale):
         self.x = x
         self.y = y
         self.z = z
-        self.dec = dec
-        self.dec2 = dec2
+        self.offset = offset
+        self.scale = scale
+
+    def localize(self, side):
+        pass
 
     def export(self):
         return (self.x,
                 self.y,
                 self.z,
-                self.dec,
-                self.dec2)
+                self.offset,
+                self.scale)
+
+
+class Vector(Common):
+    def __init__(self, x, y, z):
+        self.x = x
+        self.y = y
+        self.z = z
+
+    def __add__(self, other):
+        return Vector(self.x + other.x, self.y + other.y, self.z + other.z)
+
+    def __mul__(self, other):
+        return Vector(self.x * other.x, self.y * other.y, self.z * other.z)
+
+    def dot(self, other):
+        t = self * other
+        return t.x + t.y + t.z
+
+    def normalize(self):
+        m = self.mag()
+        self.x /= m
+        self.y /= m
+        self.z /= m
+
+    def mag(self):
+        return math.sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2)
+
 
 
 class Hidden(Common):
@@ -770,7 +1023,7 @@ class Hidden(Common):
 class Entity(Common):
     NAME = "entity"
     def __init__(self, dic:dict={}, children=[]):
-        self.id = dic.pop("id", 1)
+        self.id = dic.pop("id", self.ids())
         self.classname = dic.pop("classname", "info_player_terrorist")
 
         self.other = dic
@@ -942,10 +1195,13 @@ class VMF:
 
         return l
 
-    def get_group_center(self, group:list):
+    def get_group_center(self, group:list, geo=False):
         v = Vertex(0, 0, 0)
         for solid in group:
-            v = v + solid.center
+            if geo:
+                v = v + solid.center_geo
+            else:
+                v = v + solid.center
         v.divide(len(group))
         return v
 
@@ -1078,6 +1334,13 @@ class VMF:
                     self.file.write(f"{t}\"{i}\" \"{str(j)}\"\n")
             else:
                 self.file.write(f"{t}\"{item[0]}\" \"{str(item[1])}\"\n")
+
+
+
+
+
+
+
 
 
 def load_vmf(name):
