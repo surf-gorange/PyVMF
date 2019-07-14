@@ -663,9 +663,7 @@ class Side(Common):
         return self.dispinfo
 
     def get_vector(self):
-        v = self.plane[0].copy()
-        for vert in self.plane[1:]:
-            v = v + vert
+        raise ValueError("Vectors not implemented yet")
 
     def remove_displacement(self):
         self.dispinfo = None
@@ -1336,13 +1334,6 @@ class VMF:
                 self.file.write(f"{t}\"{item[0]}\" \"{str(item[1])}\"\n")
 
 
-
-
-
-
-
-
-
 def load_vmf(name):
     if VMF.info_in_console:
         print("Loading VMF")
@@ -1361,3 +1352,4 @@ def new_vmf():
     v = VMF()
     v._blank_vmf()
     return v
+
