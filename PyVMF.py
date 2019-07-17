@@ -268,7 +268,7 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
         self.z /= z
 
     def diff(self, other):
-        return self.x - other.x, self.y - other.y, self.z - other.z
+        return Vertex(self.x - other.x, self.y - other.y, self.z - other.z)
 
     def move(self, x, y, z):
         self.x += x
@@ -361,7 +361,7 @@ class Solid(Common):
         z -= 1
         for vertex in self.get_all_vertices():
             diff = vertex.diff(center)
-            fixed_diff = (diff[0]*x, diff[1]*y, diff[2]*z)
+            fixed_diff = (diff.x*x, diff.y*y, diff.z*z)
             vertex.move(*fixed_diff)
 
     @property
@@ -375,7 +375,7 @@ class Solid(Common):
 
     @center.setter
     def center(self, vertex):
-        self.move(*vertex.diff(self.center))
+        self.move(*vertex.diff(self.center).export())
 
     @property
     def center_geo(self):
@@ -761,7 +761,7 @@ class DispVert(Common):
         self.alpha = 0
         self.triangle_tag = None
 
-    def move(self, normal, distance):
+    def set(self, normal, distance):
         self.normal.set(*normal)
         self.distance = distance
 
@@ -805,6 +805,11 @@ class Matrix(Common):
         for y2 in range(y, y + h):
             for x2 in range(x, x + w):
                 yield x2, y2, self.get(x2, y2)
+
+    def inv_rect(self, x, y, w, h, step):
+        for y2 in range(y, y + h, step):
+            for x2 in range(x, x + w, step):
+                yield x2, y2, self.get(x2, self.size - y2 - 1)
 
     def _extract_dic(self, dic, a_var=1, triangle=False):
         for y in range(self.size - triangle):
