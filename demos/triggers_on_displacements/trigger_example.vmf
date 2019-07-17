@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "8075"
-	"mapversion" "198"
+	"mapversion" "199"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -32,13 +32,13 @@ viewsettings
 	"bSnapToGrid" "1"
 	"bShowGrid" "1"
 	"bShowLogicalGrid" "0"
-	"nGridSpacing" "64"
+	"nGridSpacing" "32"
 	"bShow3DGrid" "0"
 }
 world
 {
 	"id" "1"
-	"mapversion" "198"
+	"mapversion" "199"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -52,8 +52,8 @@ world
 			"id" "1049"
 			"plane" "(4160 -3136 0) (4160 -1088 0) (6208 -1088 0)"
 			"material" "TOOLS/TOOLSNODRAW"
-			"uaxis" "[1 0 0 -0] 0.5"
-			"vaxis" "[0 -1 0 -0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"vaxis" "[0 -1 0 0] 0.5"
 			"rotation" "0"
 			"lightmapscale" "128"
 			"smoothing_groups" "0"
@@ -714,7 +714,7 @@ world
 		side
 		{
 			"id" "253"
-			"plane" "(1 0 2) (0 0 2) (0 1 2)"
+			"plane" "(1 0 4) (0 0 4) (0 1 4)"
 			"material" "TOOLS/TOOLSTRIGGER"
 			"uaxis" "[1 0 0 0] 0.5"
 			"vaxis" "[0 -1 0 0] 0.5"
@@ -736,7 +736,7 @@ world
 		side
 		{
 			"id" "251"
-			"plane" "(0 0 0) (0 1 0) (0 1 2)"
+			"plane" "(0 0 0) (0 1 0) (0 1 4)"
 			"material" "TOOLS/TOOLSTRIGGER"
 			"uaxis" "[0 1 0 0] 0.5"
 			"vaxis" "[0 0 -1 0] 0.5"
@@ -747,7 +747,7 @@ world
 		side
 		{
 			"id" "250"
-			"plane" "(1 0 0) (0 0 0) (0 0 2)"
+			"plane" "(1 0 0) (0 0 0) (0 0 4)"
 			"material" "TOOLS/TOOLSTRIGGER"
 			"uaxis" "[1 0 0 0] 0.5"
 			"vaxis" "[0 0 -1 0] 0.5"
@@ -758,7 +758,7 @@ world
 		side
 		{
 			"id" "249"
-			"plane" "(0 1 0) (1 0 0) (1 0 2)"
+			"plane" "(0 1 0) (1 0 0) (1 0 4)"
 			"material" "TOOLS/TOOLSTRIGGER"
 			"uaxis" "[0 1 0 0] 0.5"
 			"vaxis" "[0 0 -1 0] 0.5"
