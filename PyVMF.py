@@ -4,7 +4,7 @@ import sys
 import time
 import math
 import operator
-#import pywavefront
+# import pywavefront
 
 
 def num(s):  # Tries to turn string into int, then float, if all fails returns string
@@ -119,14 +119,14 @@ def file_parser(file):
 #     return s
 
 
-
-
 class Common:
     ID = 0
+
     def export(self):
         d = {}
         for item in self.export_list:
-            d[item] = getattr(self, item)
+            t = getattr(self, item)
+            d[item] = t
         return d, self.other
 
     def export_children(self):
@@ -140,10 +140,65 @@ class Common:
         Common.ID += 1
         return Common.ID
 
+    def _string_to_vertex(self, string: str):
+        reg = re.sub(r'[(){}<>\[\]]', '', string).split()
+        return Vertex(num(reg[0]), num(reg[1]), num(reg[2]))
+
+    def _string_to_3x_vertex(self, string: str):
+        reg = re.sub(r'[(){}<>]', '', string).split()
+        clean = []
+        for i in reg:
+            clean.append(num(i))
+        return clean
+
+    def _string_to_color(self, string: str):
+        temp = string.split()
+        return Color(temp[0], temp[1], temp[2])
+
+    def _string_to_uvaxis(self, string: str):
+        reg = re.sub(r'[\[\]]', '', string).split()
+        return UVaxis(*reg)
+
+    def _dic_and_children(self, dic, children):
+        if dic is None:
+            dic = {}
+        if children is None:
+            children = []
+        return dic, children
+
+    def _dic(self, dic):
+        if dic is None:
+            dic = {}
+        return dic
+
+
+class Color:
+    def __init__(self, r, g, b):
+        self.r = r
+        self.g = g
+        self.b = b
+
+    def __str__(self):
+        return f"{self.r} {self.g} {self.b}"
+
+    def set(self, r=-1, g=-1, b=-1):
+        if r != -1 and 0 < r < 256:
+            self.r = r
+        if g != -1 and 0 < g < 256:
+            self.g = g
+        if b != -1 and 0 < b < 256:
+            self.b = b
+
+    def export(self):
+        return self.r, self.g, self.b
+
 
 class VersionInfo(Common):
     NAME = "versioninfo"
-    def __init__(self, dic:dict={}):
+
+    def __init__(self, dic: dict = None):
+        dic = self._dic(dic)
+
         self.editorversion = dic.pop("editorversion", 400)
         self.editorbuild = dic.pop("editorbuild", 8075)
         self.mapversion = dic.pop("mapversion", 7)
@@ -156,7 +211,10 @@ class VersionInfo(Common):
 
 class VisGroups(Common):
     NAME = "visgroups"
-    def __init__(self, dic:dict={}, children=[]):
+
+    def __init__(self, dic: dict = None, children: list = None):
+        dic, children = self._dic_and_children(dic, children)
+
         self.other = dic
         self.export_list = []
 
@@ -164,8 +222,8 @@ class VisGroups(Common):
         for child in children:
             self.visgroup.append(VisGroup(child.dic, child.children))
 
-    def new_visgroup(self, name:str):
-        self.visgroup.append(VisGroup({"name":name}))
+    def new_visgroup(self, name: str):
+        self.visgroup.append(VisGroup({"name": name}))
 
     def get_visgroups(self):
         return self.visgroup
@@ -176,7 +234,10 @@ class VisGroups(Common):
 
 class VisGroup(Common):
     NAME = "visgroup"
-    def __init__(self, dic:dict={}, children=[]):
+
+    def __init__(self, dic: dict = None, children: list = None):
+        dic, children = self._dic_and_children(dic, children)
+
         self.name = dic.pop("name", "default")
         self.visgroupid = dic.pop("visgroupid", 1)
         self.color = dic.pop("color", "0 0 0")
@@ -195,7 +256,10 @@ class VisGroup(Common):
 
 class ViewSettings(Common):
     NAME = "viewsettings"
-    def __init__(self, dic:dict={}):
+
+    def __init__(self, dic: dict = None):
+        dic = self._dic(dic)
+
         self.bSnapToGrid = dic.pop("bSnapToGrid", 1)
         self.bShowGrid = dic.pop("bShowGrid", 1)
         self.bShowLogicalGrid = dic.pop("bShowLogicalGrid", 0)
@@ -208,7 +272,10 @@ class ViewSettings(Common):
 
 class World(Common):
     NAME = "world"
-    def __init__(self, dic:dict={}, children=[]):
+
+    def __init__(self, dic: dict = None, children: list = None):
+        dic, children = self._dic_and_children(dic, children)
+
         self.id = dic.pop("id", self.ids())
         self.mapversion = dic.pop("mapversion", 1)
         self.classname = dic.pop("classname", "worldspawn")
@@ -245,9 +312,13 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
         self.z = z
 
         self.sorting = 0  # Used in solid get_3d_extremity
+        self.normal = True
 
     def __str__(self):
-        return f"{self.x} {self.y} {self.z}"
+        if self.normal:
+            return f"{self.x} {self.y} {self.z}"
+        else:
+            return f"[{self.x} {self.y} {self.z}]"
 
     def __eq__(self, other):
         if self.x == other.x and self.y == other.y and self.z == other.z:
@@ -256,6 +327,9 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
 
     def __add__(self, other):
         return Vertex(self.x + other.x, self.y + other.y, self.z + other.z)
+
+    def __sub__(self, other):
+        return Vertex(self.x - other.x, self.y - other.y, self.z - other.z)
 
     def divide(self, amount):
         self.x /= amount
@@ -281,21 +355,21 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
         self.z = z
 
     def rotate_z(self, center, angle):
-        angle = math.radians(angle)
-        new_x = center.x + (self.x - center.x)*math.cos(angle) - (self.y - center.y)*math.sin(angle)
-        new_y = center.y + (self.x - center.x)*math.sin(angle) + (self.y - center.y)*math.cos(angle)
+        a = math.radians(angle)
+        new_x = center.x + (self.x - center.x)*math.cos(a) - (self.y - center.y)*math.sin(a)
+        new_y = center.y + (self.x - center.x)*math.sin(a) + (self.y - center.y)*math.cos(a)
         self.set(new_x, new_y, self.z)
 
     def rotate_y(self, center, angle):
-        angle = math.radians(angle)
-        new_x = center.x + (self.x - center.x) * math.cos(angle) - (self.z - center.z) * math.sin(angle)
-        new_z = center.z + (self.x - center.x) * math.sin(angle) + (self.z - center.z) * math.cos(angle)
+        a = math.radians(angle)
+        new_x = center.x + (self.x - center.x) * math.cos(a) - (self.z - center.z) * math.sin(a)
+        new_z = center.z + (self.x - center.x) * math.sin(a) + (self.z - center.z) * math.cos(a)
         self.set(new_x, self.y, new_z)
 
     def rotate_x(self, center, angle):
-        angle = math.radians(angle)
-        new_y = center.y + (self.y - center.y) * math.cos(angle) - (self.z - center.z) * math.sin(angle)
-        new_z = center.z + (self.y - center.y) * math.sin(angle) + (self.z - center.z) * math.cos(angle)
+        a = math.radians(angle)
+        new_y = center.y + (self.y - center.y) * math.cos(a) - (self.z - center.z) * math.sin(a)
+        new_z = center.z + (self.y - center.y) * math.sin(a) + (self.z - center.z) * math.cos(a)
         self.set(self.x, new_y, new_z)
 
     def flip(self, x=None, y=None, z=None):
@@ -319,7 +393,10 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
 
 class Solid(Common):
     NAME = "solid"
-    def __init__(self, dic:dict={}, children=[]):
+
+    def __init__(self, dic: dict = None, children: list = None):
+        dic, children = self._dic_and_children(dic, children)
+
         self.id = dic.pop("id", self.ids())
 
         self.other = dic
@@ -333,6 +410,9 @@ class Solid(Common):
 
             elif str(child) == Editor.NAME:
                 self.editor = Editor(child.dic)
+
+    def add_sides(self, *args):
+        self.side.extend(args)
 
     def move(self, x, y, z):
         for side in self.side:
@@ -393,8 +473,7 @@ class Solid(Common):
 
         return v
 
-
-    def get_axis_extremity(self, x:bool=None, y:bool=None, z:bool=None):
+    def get_axis_extremity(self, x: bool = None, y: bool = None, z: bool = None):
         verts = self.get_only_unique_vertices()
 
         if x is not None:
@@ -411,7 +490,7 @@ class Solid(Common):
 
         raise ValueError("No axis given")
 
-    def get_3d_extremity(self, x:bool=None, y:bool=None, z:bool=None):
+    def get_3d_extremity(self, x: bool = None, y: bool = None, z: bool = None):
         verts = self.get_only_unique_vertices()
 
         for vert in verts:
@@ -442,8 +521,6 @@ class Solid(Common):
 
         return best, ties
 
-
-
     def get_all_vertices(self):
         vertex_list = []
         for side in self.side:
@@ -464,38 +541,37 @@ class Solid(Common):
 
         return Vertex(max(x) - min(x), max(y) - min(y), max(z) - min(z))
 
-
-    def get_displacement_sides(self, matrix_instead_of_side=False):
-        l = []
+    def get_displacement_sides(self, matrix_instead_of_side=False) -> list:
+        li = []
         for side in self.side:
             if side.dispinfo is not None:
                 if matrix_instead_of_side:
-                    l.append(side.dispinfo.matrix)
+                    li.append(side.dispinfo.matrix)
                 else:
-                    l.append(side)
-        return l
+                    li.append(side)
+        return li
 
-    def get_texture_sides(self, name:str, exact=False) -> bool:
-        l = []
+    def get_texture_sides(self, name: str, exact=False) -> list:
+        li = []
         for side in self.side:
             if not exact:
                 if name.upper() in side.material:
-                    l.append(side)
+                    li.append(side)
             else:
                 if side.material == name.upper():
-                    l.append(side)
-        return l
+                    li.append(side)
+        return li
 
     def get_only_unique_vertices(self):
         vertex_list = []
         for side in self.side:
             for vertex in side.plane:
-                if not vertex in vertex_list:
+                if vertex not in vertex_list:
                     vertex_list.append(vertex)
 
         return vertex_list
 
-    def has_texture(self, name:str, exact=False) -> bool:
+    def has_texture(self, name: str, exact=False) -> bool:
         for side in self.side:
             if not exact:
                 if name.upper() in side.material:
@@ -505,13 +581,13 @@ class Solid(Common):
                     return True
         return False
 
-    def replace_texture(self, old_material:str, new_material:str):
+    def replace_texture(self, old_material: str, new_material: str):
         for side in self.side:
             if side.material == old_material:
                 side.material = new_material
 
     def naive_subdivide(self, x=1, y=1, z=1) -> list:
-        l = []
+        li = []
 
         s = self.copy()
 
@@ -532,14 +608,16 @@ class Solid(Common):
                 for ix in range(x):
                     s2 = s.copy()
                     s2.move(ix * move_amount.x, -iy * move_amount.y, -iz * move_amount.z)
-                    l.append(s2)
+                    li.append(s2)
 
-        return l
+        return li
 
     def is_simple_solid(self) -> bool:
-        if len(self.side) <= 6:
-            return True
-        return False
+        return len(self.side) <= 6
+
+    def set_texture(self, new_material):
+        for side in self.get_sides():
+            side.material = new_material
 
     def remove_all_displacements(self):
         for side in self.side:
@@ -551,7 +629,10 @@ class Solid(Common):
 
 class Editor(Common):
     NAME = "editor"
-    def __init__(self, dic:dict={}, parent_type=None):
+
+    def __init__(self, dic: dict = None, parent_type=None):
+        dic = self._dic(dic)
+
         self.parent_type = parent_type  # This is not used in the VMF
 
         self.color = dic.pop("color", "0 0 0")
@@ -565,13 +646,6 @@ class Editor(Common):
         self.other = dic
         self.export_list = []
 
-    def _string_to_color(self, string):
-        temp = string.split()
-        return [int(i) for i in temp]
-
-    def _list_to_color(self, lis):
-        return f"{lis[0]} {lis[1]} {lis[2]}"
-
     def has_visgroup(self) -> bool:
         if self.visgroupid is None:
             return False
@@ -579,8 +653,7 @@ class Editor(Common):
             return True
 
     def export(self):
-        d = {}
-        d["color"] = self._list_to_color(self.color)
+        d = {"color": self.color}
         if self.groupid is not None:
             d["groupid"] = self.groupid
         if self.visgroupid is not None:
@@ -595,8 +668,11 @@ class Editor(Common):
 
 class Group(Common):
     NAME = "group"
-    def __init__(self, dic:dict={}, children=[]):
-        self.id =dic.pop("id", self.ids())
+
+    def __init__(self, dic: dict = None, children: list = None):
+        dic, children = self._dic_and_children(dic, children)
+
+        self.id = dic.pop("id", self.ids())
 
         self.other = dic
         self.export_list = ["id"]
@@ -612,17 +688,25 @@ class Group(Common):
 
 class Side(Common):
     NAME = "side"
-    def __init__(self, dic:dict={}, children=[]):
+
+    def __init__(self, dic: dict = None, children: list = None):
+        dic, children = self._dic_and_children(dic, children)
+
         self.id = dic.pop("id", self.ids())
 
-        t = self._string_to_3x_vertex(dic.pop("plane"))
+        p = dic.pop("plane", "(0 0 0) (0 0 0) (0 0 0)")
+        t = self._string_to_3x_vertex(p)
         self.plane = (Vertex(t[0], t[1], t[2]),
                       Vertex(t[3], t[4], t[5]),
                       Vertex(t[6], t[7], t[8]))
 
         self.material = dic.pop("material", "TOOLS/TOOLSNODRAW")
-        self.uaxis = dic.pop("uaxis")
-        self.vaxis = dic.pop("vaxis")
+
+        self.uaxis = dic.pop("uaxis", "[1 0 0 0] 0.5")
+        self.uaxis = self._string_to_uvaxis(self.uaxis)
+        self.vaxis = dic.pop("vaxis", "[0 -1 0 0] 0.5")
+        self.vaxis = self._string_to_uvaxis(self.vaxis)
+
         self.rotation = dic.pop("rotation", 0)
         self.lightmapscale = dic.pop("lightmapscale", 16)
         self.smoothing_groups = dic.pop("smoothing_groups", 0)
@@ -634,6 +718,9 @@ class Side(Common):
         for child in children:
             if str(child) == DispInfo.NAME:
                 self.dispinfo = DispInfo(child.dic, child.children)
+
+    def __str__(self):
+        return f"({self.plane[0]}) ({self.plane[1]}) ({self.plane[2]})"
 
     def move(self, x, y, z):
         for vertex in self.plane:
@@ -668,25 +755,15 @@ class Side(Common):
     def remove_displacement(self):
         self.dispinfo = None
 
-    def _string_to_3x_vertex(self, string):
-        reg = re.sub('[(){}<>]', '', string).split()
-        clean = []
-        for i in reg:
-            clean.append(num(i))
-        return clean
-
-    def _plane_to_string(self):
-        return f"({self.plane[0]}) ({self.plane[1]}) ({self.plane[2]})"
-
     def export(self):
-        d = {"id" : self.id,
-             "plane" : self._plane_to_string(),
-             "material" : self.material,
-             "uaxis" : self.uaxis,
-             "vaxis" : self.vaxis,
-             "rotation" : self.rotation,
-             "lightmapscale" : self.lightmapscale,
-             "smoothing_groups" : self.smoothing_groups}
+        d = {"id": self.id,
+             "plane": self.__str__(),
+             "material": self.material,
+             "uaxis": self.uaxis,
+             "vaxis": self.vaxis,
+             "rotation": self.rotation,
+             "lightmapscale": self.lightmapscale,
+             "smoothing_groups": self.smoothing_groups}
 
         return d, self.other
 
@@ -696,29 +773,29 @@ class Side(Common):
 
 class DispInfo(Common):
     NAME = "dispinfo"
-    def __init__(self, dic:dict={}, children=[]):
+
+    def __init__(self, dic: dict = None, children: list = None):
+        dic, children = self._dic_and_children(dic, children)
+
         self.power = dic.pop("power", 3)
-        self.startposition = dic.pop("startposition", "[0 0 0]")
+        startposition = dic.pop("startposition", "[0 0 0]")
+        self.startposition = self._string_to_vertex(startposition)
+        self.startposition.normal = False
         self.flags = dic.pop("flags", 0)
         self.elevation = dic.pop("elevation", 0)
         self.subdiv = dic.pop("subdiv", 0)
 
-        fix = 0
         self.size = 0
         self.matrix_size_fix = 0
 
         if self.power == 2 or self.power == 4:
-            fix = 1
             self.matrix_size_fix = self.power**2
-            self.size = self.matrix_size_fix + fix
+            self.size = self.matrix_size_fix + 1
         else:
             self.size = self.power**2
             self.matrix_size_fix = self.size - 1
 
-
         self.matrix = Matrix(self.size)
-
-
 
         self.other = dic
         self.export_list = ["power", "startposition", "flags", "elevation", "subdiv"]
@@ -782,7 +859,7 @@ class TriangleTag(Common):
 
 
 class Matrix(Common):
-    def __init__(self, size:int):
+    def __init__(self, size: int):
         self.size = size
         self.matrix = [[DispVert() for y in range(self.size)] for x in range(self.size)]
 
@@ -793,10 +870,10 @@ class Matrix(Common):
         return self.matrix[x][y]
 
     def row(self, y):
-        l = []
+        li = []
         for x in range(self.size):
-            l.append(self.matrix[x][y])
-        return l
+            li.append(self.matrix[x][y])
+        return li
 
     def column(self, x):
         return self.matrix[x]
@@ -811,13 +888,13 @@ class Matrix(Common):
             for x2 in range(x, x + w, step):
                 yield x2, y2, self.get(x2, self.size - y2 - 1)
 
-    def _extract_dic(self, dic, a_var=1, triangle=False):
+    def extract_dic(self, dic, a_var=1, triangle=False):
         for y in range(self.size - triangle):
             t = dic.pop(f"row{y}").split(" ")
             for x in range((self.size - triangle) * a_var):
                 yield x, y, t
 
-    def _export(self, attribute):
+    def export_attr(self, attribute):
         e = {}
         for y in range(self.size):
             current_row = f"row{y}"
@@ -834,11 +911,14 @@ class Matrix(Common):
 
 class Normals(Common):
     NAME = "normals"
-    def __init__(self, matrix, dic:dict={}):
+
+    def __init__(self, matrix, dic: dict = None):
+        dic = self._dic(dic)
+
         self.matrix = matrix
         a_var = 3
         i = 0
-        for x, y, t in self.matrix._extract_dic(dic, a_var):
+        for x, y, t in self.matrix.extract_dic(dic, a_var):
             if i == 0:
                 self.matrix.get(x//a_var, y).normal.x = num(t[x])
             elif i == 1:
@@ -852,30 +932,36 @@ class Normals(Common):
         self.export_list = []
 
     def export(self):
-        return self.matrix._export("normal"), self.other
+        return self.matrix.export_attr("normal"), self.other
 
 
 class Distances(Common):
     NAME = "distances"
-    def __init__(self, matrix, dic:dict={}):
+
+    def __init__(self, matrix, dic: dict = None):
+        dic = self._dic(dic)
+
         self.matrix = matrix
-        for x, y, t in self.matrix._extract_dic(dic):
+        for x, y, t in self.matrix.extract_dic(dic):
             self.matrix.get(x, y).distance = num(t[x])
 
         self.other = dic
         self.export_list = []
 
     def export(self):
-        return self.matrix._export("distance"), self.other
+        return self.matrix.export_attr("distance"), self.other
 
 
 class Offsets(Common):
     NAME = "offsets"
-    def __init__(self, matrix, dic:dict={}):
+
+    def __init__(self, matrix, dic: dict = None):
+        dic = self._dic(dic)
+
         self.matrix = matrix
         a_var = 3
         i = 0
-        for x, y, t in self.matrix._extract_dic(dic, a_var):
+        for x, y, t in self.matrix.extract_dic(dic, a_var):
             if i == 0:
                 self.matrix.get(x // a_var, y).offset.x = num(t[x])
             elif i == 1:
@@ -889,16 +975,19 @@ class Offsets(Common):
         self.export_list = []
 
     def export(self):
-        return self.matrix._export("offset"), self.other
+        return self.matrix.export_attr("offset"), self.other
 
 
 class OffsetNormals(Common):
     NAME = "offset_normals"
-    def __init__(self, matrix, dic:dict={}):
+
+    def __init__(self, matrix, dic: dict = None):
+        dic = self._dic(dic)
+
         self.matrix = matrix
         a_var = 3
         i = 0
-        for x, y, t in self.matrix._extract_dic(dic, a_var):
+        for x, y, t in self.matrix.extract_dic(dic, a_var):
             if i == 0:
                 self.matrix.get(x // a_var, y).offset_normal.x = num(t[x])
             elif i == 1:
@@ -912,31 +1001,37 @@ class OffsetNormals(Common):
         self.export_list = []
 
     def export(self):
-        return self.matrix._export("offset_normal"), self.other
+        return self.matrix.export_attr("offset_normal"), self.other
 
 
 class Alphas(Common):
     NAME = "alphas"
-    def __init__(self, matrix, dic:dict={}):
+
+    def __init__(self, matrix, dic: dict = None):
+        dic = self._dic(dic)
+
         self.matrix = matrix
-        for x, y, t in self.matrix._extract_dic(dic):
+        for x, y, t in self.matrix.extract_dic(dic):
             self.matrix.get(x, y).alpha = num(t[x])
 
         self.other = dic
         self.export_list = []
 
     def export(self):
-        return self.matrix._export("alpha"), self.other
+        return self.matrix.export_attr("alpha"), self.other
 
 
 class TriangleTags(Common):
     NAME = "triangle_tags"
-    def __init__(self, matrix, dic:dict={}):
+
+    def __init__(self, matrix, dic: dict = None):
+        dic = self._dic(dic)
+
         self.matrix = matrix  # TriangleTags is 1 row and column smaller than the others
         a_var = 2
         i = 0
         t1 = 0
-        for x, y, t in self.matrix._extract_dic(dic, a_var, True):
+        for x, y, t in self.matrix.extract_dic(dic, a_var, True):
             if i == 0:
                 t1 = num(t[x])
             else:
@@ -948,12 +1043,15 @@ class TriangleTags(Common):
         self.export_list = []
 
     def export(self):
-        return self.matrix._export("triangle_tag"), self.other
+        return self.matrix.export_attr("triangle_tag"), self.other
 
 
 class AllowedVerts(Common):
     NAME = "allowed_verts"
-    def __init__(self, matrix, dic:dict={}):
+
+    def __init__(self, matrix, dic: dict = None):
+        dic = self._dic(dic)
+
         self.other = dic
         self.export_list = []
 
@@ -965,6 +1063,9 @@ class UVaxis(Common):
         self.z = z
         self.offset = offset
         self.scale = scale
+
+    def __str__(self):
+        return f"[{self.x} {self.y} {self.z} {self.offset}] {self.scale}"
 
     def localize(self, side):
         pass
@@ -983,6 +1084,9 @@ class Vector(Common):
         self.y = y
         self.z = z
 
+    def __str__(self):
+        return f"{self.x} {self.y} {self.z}"
+
     def __add__(self, other):
         return Vector(self.x + other.x, self.y + other.y, self.z + other.z)
 
@@ -993,6 +1097,11 @@ class Vector(Common):
         t = self * other
         return t.x + t.y + t.z
 
+    def cross(self, other):
+        return Vector((self.y*other.z - self.z*other.y),
+                      (self.z*other.x - self.x*other.z),
+                      (self.x*other.y - self.y*other.x))
+
     def normalize(self):
         m = self.mag()
         self.x /= m
@@ -1002,11 +1111,26 @@ class Vector(Common):
     def mag(self):
         return math.sqrt(self.x ** 2 + self.y ** 2 + self.z ** 2)
 
+    def angle(self, other):
+        return math.degrees(math.acos(self.dot(other) / (self.mag() * other.mag())))
+
+    def angle_to_origin(self):
+        return Vector(-1, 0, 0).angle(self)
+
+    def to_vertex(self):
+        return Vertex(self.x, self.y, self.z)
+
+    @classmethod
+    def vector_from_2_vertices(cls, v1: Vertex, v2: Vertex):
+        return Vector(*(v2-v1).export())
 
 
 class Hidden(Common):
     NAME = "hidden"
-    def __init__(self, dic:dict=[], children=[]):
+
+    def __init__(self, dic: dict = None, children: list = None):
+        dic, children = self._dic_and_children(dic, children)
+
         self.other = dic
         self.export_list = []
 
@@ -1025,14 +1149,16 @@ class Hidden(Common):
 
 class Entity(Common):
     NAME = "entity"
-    def __init__(self, dic:dict={}, children=[]):
+
+    def __init__(self, dic: dict = None, children: list = None):
+        dic, children = self._dic_and_children(dic, children)
+
         self.id = dic.pop("id", self.ids())
         self.classname = dic.pop("classname", "info_player_terrorist")
 
         self.other = dic
         if "origin" in dic:
-            reg = re.sub('[(){}<>]', '', dic["origin"]).split()
-            self.other["origin"] = Vertex(num(reg[0]), num(reg[1]), num(reg[2]))
+            self.other["origin"] = self._string_to_vertex(dic["origin"])
         self.export_list = ["id", "classname"]
 
         self.connections = []
@@ -1054,14 +1180,20 @@ class Entity(Common):
 
 class Connections(Common):
     NAME = "connections"
-    def __init__(self, dic:dict={}):
+
+    def __init__(self, dic: dict = None):
+        dic = self._dic(dic)
+
         self.other = dic
         self.export_list = []
 
 
 class Cameras(Common):
     NAME = "cameras"
-    def __init__(self, dic:dict={}, children=[]):
+
+    def __init__(self, dic: dict = None, children: list = None):
+        dic, children = self._dic_and_children(dic, children)
+
         self.activecamera = dic.pop("activecamera", -1)
 
         self.other = dic
@@ -1077,7 +1209,10 @@ class Cameras(Common):
 
 class Camera(Common):
     NAME = "camera"
-    def __init__(self, dic:dict={}):
+
+    def __init__(self, dic: dict = None):
+        dic = self._dic(dic)
+
         self.position = dic.pop("position", "[0 0 0]")
         self.look = dic.pop("look", "[0 0 0]")
 
@@ -1087,7 +1222,10 @@ class Camera(Common):
 
 class Cordons(Common):
     NAME = "cordons"
-    def __init__(self, dic:dict={}, children=[]):
+
+    def __init__(self, dic: dict = None, children: list = None):
+        dic, children = self._dic_and_children(dic, children)
+
         self.active = dic.pop("active", 0)
 
         self.other = dic
@@ -1103,7 +1241,10 @@ class Cordons(Common):
 
 class Cordon(Common):
     NAME = "cordon"
-    def __init__(self, dic:dict={}, children=[]):
+
+    def __init__(self, dic: dict = None, children: list = None):
+        dic, children = self._dic_and_children(dic, children)
+
         self.name = dic.pop("name", "default")
         self.active = dic.pop("active", 1)
 
@@ -1120,12 +1261,56 @@ class Cordon(Common):
 
 class Box(Common):
     NAME = "box"
-    def __init__(self, dic:dict={}):
+
+    def __init__(self, dic: dict = None):
+        dic = self._dic(dic)
+
         self.mins = dic.pop("mins", "(0 0 0)")
         self.maxs = dic.pop("maxs", "(0 0 0)")
 
         self.other = dic
         self.export_list = ["mins", "maxs"]
+
+
+class SolidGenerator:
+    @staticmethod
+    def cube(vertex: Vertex, w, h, l, center=False, dev=0):
+        x, y, z = vertex.export()
+        f1 = Side(dic={"plane": f"({x + w} {y} {z + l}) ({x + w} {y} {z}) ({x} {y} {z})"})
+        f2 = Side(dic={"plane": f"({x + w} {y + h} {z}) ({x + w} {y + h} {z + l}) ({x} {y + h} {z + l})"})
+        f3 = Side(dic={"plane": f"({x} {y} {z}) ({x} {y + h} {z}) ({x} {y + h} {z + l})"})
+        f4 = Side(dic={"plane": f"({x + w} {y + h} {z}) ({x + w} {y} {z}) ({x + w} {y} {z + l})"})
+        f5 = Side(dic={"plane": f"({x} {y} {z + l}) ({x} {y + h} {z + l}) ({x + w} {y + h} {z + l})"})
+        f6 = Side(dic={"plane": f"({x} {y + h} {z}) ({x} {y} {z}) ({x + w} {y} {z})"})
+
+        solid = Solid()
+        solid.add_sides(f1, f2, f3, f4, f5, f6)
+        solid.editor = Editor()
+
+        if center:
+            solid.center = Vertex(x, y, z)
+
+        if dev == 1:
+            solid.set_texture("tools/toolsorigin")
+        elif dev == 2:
+            solid.set_texture("tools/toolsinvisibleladder")
+
+        return solid
+
+    @staticmethod
+    def displacement_triangle(vertex: Vertex, w, h, l):
+        x, y, z = vertex.export()
+        f1 = Side(dic={"plane": f"({x} {y} {z}) ({x} {y + h} {z}) ({x} {y + h} {z + l})"})
+        f2 = Side(dic={"plane": f"({x} {y + h} {z}) ({x} {y} {z}) ({x + w} {y} {z})"})
+        f3 = Side(dic={"plane": f"({x} {y} {z + l}) ({x} {y + h} {z + l}) ({x + w} {y} {z + l})"})
+        f4 = Side(dic={"plane": f"({x + w} {y} {z + l}) ({x + w} {y} {z}) ({x} {y} {z})"})
+        f5 = Side(dic={"plane": f"({x} {y + h} {z + l}) ({x} {y + h} {z}) ({x + w} {y} {z})"})
+
+        solid = Solid()
+        solid.add_sides(f1, f2, f3, f4, f5)
+        solid.editor = Editor()
+
+        return solid
 
 
 class VMF:
@@ -1148,57 +1333,64 @@ class VMF:
         self.cameras = None
         self.cordons = None
 
-    def get_solids(self, include_hidden=False):
-        l = []
-        l.extend(self.world.solid)
+        # OTHER VARIABLES
+        self.file = None
+
+    def get_solids(self, include_hidden=False, include_solid_entities=True):
+        li = []
+        li.extend(self.world.solid)
         if include_hidden:
             for s in self.world.hidden:
-                l.append(s.solid)
+                li.append(s.solid)
 
-        for e in self.entity:
-            for s in e.solid:
-                l.append(s)
+        if include_solid_entities:
+            for e in self.entity:
+                for s in e.solid:
+                    li.append(s)
 
         if include_hidden:
             for h in self.hidden:
                 if h.entity is not None:
                     for s in h.entity.solid:
-                        l.append(s)
+                        li.append(s)
 
-        return l
+        return li
 
-    def get_entities(self, include_hidden=False):
-        l = []
+    def get_entities(self, include_hidden=False, include_solid_entities=False):
+        li = []
         if include_hidden:
             for h in self.hidden:
                 if h.entity is not None:
-                    if not h.entity.solid:
-                        l.append(h.entity)
+                    if not h.entity.solid or include_solid_entities:
+                        li.append(h.entity)
 
         for e in self.entity:
-            if not e.solid:
-                l.append(e)
+            if not e.solid or include_solid_entities:
+                li.append(e)
 
-        return l
+        return li
 
-    def get_solids_and_entities(self, include_hidden=False):
-        return self.get_solids(include_hidden) + self.get_entities(include_hidden)
+    def get_solids_and_entities(self, include_hidden=False, direct_solid_from_entity=True):
+        # direct_solid_from_entity is if you want the entity instead of getting directly the solid from the entity
+        if direct_solid_from_entity:
+            return self.get_solids(include_hidden) + self.get_entities(include_hidden)
+        return self.get_solids(include_hidden, False) + self.get_entities(include_hidden, True)
 
-    def get_all_from_visgroup(self, name:str):
+    def get_all_from_visgroup(self, name: str):
         v_id = None
-        l = []
+        li = []
         for visgroup in self.visgroups.get_visgroups():
             if visgroup.name == name:
                 v_id = visgroup.visgroupid
 
         if v_id is not None:
-            for item in self.get_solids_and_entities():
+            for item in self.get_solids_and_entities(direct_solid_from_entity=False):
                 if item.editor.visgroupid == v_id:
-                    l.append(item)
+                    li.append(item)
 
-        return l
+        return li
 
-    def get_group_center(self, group:list, geo=False):
+    def get_group_center(self, group: list, geo=False):
         v = Vertex(0, 0, 0)
         for solid in group:
             if geo:
@@ -1208,10 +1400,10 @@ class VMF:
         v.divide(len(group))
         return v
 
-    def sort_by_attribute(self, category_list:list, attr:str):
+    def sort_by_attribute(self, category_list: list, attr: str):
         return sorted(category_list, key=operator.attrgetter(attr))
 
-    def add_to_visgroup(self, name:str, *args):
+    def add_to_visgroup(self, name: str, *args):
         v_id = None
         for visgroup in self.visgroups.get_visgroups():
             if visgroup.name == name:
@@ -1226,7 +1418,7 @@ class VMF:
     def add_entities(self, *args):
         self.entity.extend(args)
 
-    def _add_section(self, section:TempCategory):
+    def add_section(self, section: TempCategory):
         name = str(section)
         dic = section.dic
         children = section.children
@@ -1255,7 +1447,10 @@ class VMF:
         elif name == Cordons.NAME:
             self.cordons = Cordons(dic, children)
 
-    def _blank_vmf(self):
+    def mark_vertex(self, vertex: Vertex, size=32):
+        self.add_solids(SolidGenerator.cube(vertex, size, size, size, True, 1))
+
+    def blank_vmf(self):
         self.versioninfo = VersionInfo()
         self.visgroups = VisGroups()
         self.viewsettings = ViewSettings()
@@ -1266,10 +1461,10 @@ class VMF:
     def export(self, filename):
         self.__indent = 1  # Represents the indent of the data and not the categories (which use indent-1)
 
+        start_time = time.time()  # To get how long the export took
+
         if VMF.info_in_console:
             print("Exporting VMF")
-
-            start_time = time.time()  # To get how long the export took
 
             for item in (self.versioninfo, self.visgroups, self.viewsettings, self.world,
                          *self.entity, *self.hidden, self.cameras, self.cordons):
@@ -1282,7 +1477,7 @@ class VMF:
         # file is much faster by a long shot (the biggest file ~31mb takes about 8 seconds, before it took over 5 mins)
         with open(filename, "w+") as self.file:
             for item in (self.versioninfo, self.visgroups, self.viewsettings, self.world,
-                             *self.entity, *self.hidden, self.cameras, self.cordons):
+                         *self.entity, *self.hidden, self.cameras, self.cordons):
                 self._nest_export(item)
 
         if VMF.info_in_console:
@@ -1330,7 +1525,8 @@ class VMF:
         t += "\t"
 
         for item in info_list:
-            if not item: continue
+            if not item:
+                continue
 
             if type(item) is dict:
                 for i, j in item.items():
@@ -1346,15 +1542,15 @@ def load_vmf(name):
     v = VMF()
     f = file_parser(name)
     for section in f:
-        v._add_section(section)
+        v.add_section(section)
 
     if VMF.info_in_console:
         print("VMF Loaded")
         print("------------------------------")
     return v
 
+
 def new_vmf():
     v = VMF()
-    v._blank_vmf()
+    v.blank_vmf()
     return v
-

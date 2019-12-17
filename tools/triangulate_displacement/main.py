@@ -2,58 +2,81 @@ from PyVMF import *
 from random import randint
 
 
-def trigger_on_displacements(group: list, base_triangle, resolution=1):
-    if resolution != 1 and resolution%2==1:
+def triangulate_displacement(vmf: VMF, group: list, base_triangle: Solid = None, resolution=1, height=4):
+    if base_triangle is None:
+        base_triangle = SolidGenerator.displacement_triangle(Vertex(0, 0, 0), 1, 1, height)
+        base_triangle.set_texture("tools/toolstrigger")
+
+    if resolution != 1 and resolution % 2 == 1:
         raise ValueError("Resolution must either be 1 or a multiple of 2")
 
+    # The tuples below represent the different corners of the triangle -> (False, True) = Left-Top corner
+    # I divide the displacement into a matrix_size_fix amount of squares (ex: 4*4), each square is made up of 2
+    # triangles (one being a 180 degree rotation of the other). Each new square is the previous square flipped on the
+    # x-axis. This is why l_extremities has 2 sub-lists, one for "normal" extremities, and one for flipped extremities
     l_extremities = [[(False, True), None, (False, False), (True, False)],
                      [(False, True), (True, True), (False, False), None]]
     r_extremities = [[(False, True), (True, True), None, (True, False)],
                      [None, (True, True), (False, False), (True, False)]]
+
     directions = (l_extremities, r_extremities)
 
     export_list = []
 
     for solid in group:
-        disp = solid.get_displacement_sides()[0].get_displacement()
+        solid_side = solid.get_displacement_sides()[0]
+        disp = solid_side.get_displacement()
         if disp:
             matrix = disp.matrix
 
-            size = solid.get_size()
+            verts = solid_side.get_vertices()
+            rot_vector = Vector.vector_from_2_vertices(verts[1], verts[0])
+            angle = rot_vector.angle_to_origin()
+            rot_vertex = verts[1]
+
+            correct_size = solid.copy()
+            correct_size.rotate_z(solid.center_geo, angle)
+            correct_size.move(0, 0, 2000)
+            export_list.append(correct_size)
+
+            size = correct_size.get_size()
             size.divide(disp.matrix_size_fix/resolution)
 
             triangle = base_triangle.copy()
 
-            normal = True
+            flipped = True  # Whether the "triangle square" should be flipped or not
             tris_list = []
             for sy in range(0, disp.matrix_size_fix, resolution):
-                normal = not normal
+                # The last "triangle square" of a row is the same flip direction as the first in the next row
+                flipped = not flipped
                 for sx in range(0, disp.matrix_size_fix, resolution):
                     left_tri = triangle.copy()
 
-                    left_tri.rotate_z(left_tri.center_geo, normal * -90)
+                    left_tri.rotate_z(left_tri.center_geo, flipped * -90)
                     left_tri.scale(Vertex(0, 0, 0), size.x, size.y, 1)
                     left_tri.move(sx * size.x / resolution, sy * -size.y / resolution, 0)
 
                     right_tri = left_tri.copy()
                     right_tri.rotate_z(right_tri.center_geo, 180)
 
-                    #--------------------------------- Change the values here for some cool geometry
+                    # --------------------------------- Change the values here for some cool geometry
                     left_tri.move(0, 0, 0)
                     right_tri.move(0, 0, 0)
-                    #---------------------------------
+                    # ---------------------------------
 
                     tris = [left_tri, right_tri]
 
-                    normal = not normal
+                    flipped = not flipped
 
                     i = 0
                     for x, y, vert in matrix.inv_rect(sx, sy, 2*resolution, 2*resolution, resolution):
                         for j, side in enumerate(directions):
-                            direction = side[not normal][i]
+                            direction = side[not flipped][i]
                             if direction is not None:
                                 for tri_vert in tris[j].get_3d_extremity(*direction)[1]:
                                     tri_vert.move(0, 0, vert.normal.z * vert.distance)
+                                    print(tri_vert, "--", vert.normal.z*vert.distance)
+                                    vmf.mark_vertex(tri_vert)
 
                         i += 1
 
@@ -65,12 +88,13 @@ def trigger_on_displacements(group: list, base_triangle, resolution=1):
             diff.z = f.diff(Vertex(0, 0, 0)).z
             for trio in tris_list:
                 trio.move(*diff.export())
+                #trio.rotate_z(solid.center_geo, -angle)
 
     return export_list
 
 
 if __name__ == "__main__":
-    v = load_vmf("trigger_example.vmf")
+    v = load_vmf("testing.vmf")
 
     d = v.get_all_from_visgroup("displacement")
 
@@ -78,7 +102,7 @@ if __name__ == "__main__":
     # for x, y, vert in m.rect(0, 0, m.size, m.size):
     #     vert.set((0, 0, 1), x*x*6)
 
-    t = trigger_on_displacements(d, v.get_all_from_visgroup("trigger")[0], 2) # Set to 1 for perfect trigger coverage
+    t = triangulate_displacement(d, v.get_all_from_visgroup("trigger")[0], 1)  # Set to 1 for perfect trigger coverage
     v.add_solids(*t)
 
-    v.export("triggered_example.vmf")
+    v.export("testing2.vmf")
