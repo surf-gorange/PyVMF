@@ -239,7 +239,7 @@ class VisGroup(Common):
         dic, children = self._dic_and_children(dic, children)
 
         self.name = dic.pop("name", "default")
-        self.visgroupid = dic.pop("visgroupid", 1)
+        self.visgroupid = dic.pop("visgroupid", self.ids())
         self.color = dic.pop("color", "0 0 0")
 
         self.other = dic
@@ -321,15 +321,18 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
             return f"[{self.x} {self.y} {self.z}]"
 
     def __eq__(self, other):
-        if self.x == other.x and self.y == other.y and self.z == other.z:
-            return True
-        return False
+        return self.x == other.x and self.y == other.y and self.z == other.z
 
     def __add__(self, other):
         return Vertex(self.x + other.x, self.y + other.y, self.z + other.z)
 
     def __sub__(self, other):
         return Vertex(self.x - other.x, self.y - other.y, self.z - other.z)
+
+    def similar(self, other, accuracy=0.001):
+        return ((abs(self.x - other.x) < accuracy) and
+                (abs(self.y - other.y) < accuracy) and
+                (abs(self.z - other.z) < accuracy))
 
     def divide(self, amount):
         self.x /= amount
@@ -419,6 +422,21 @@ class Solid(Common):
             for vert in side.plane:
                 vert.move(x, y, z)
 
+    def get_linked_vertices(self, vertex: Vertex, similar=0.0) -> list:
+        li = []
+
+        for vert in self.get_all_vertices():
+            if similar == 0.0:
+                if vertex == vert:
+                    li.append(vert)
+
+            else:
+                if vertex.similar(vert, similar):
+                    li.append(vert)
+
+        return li
+
+
     def rotate_x(self, center, angle):
         for side in self.side:
             side.rotate_x(center, angle)
@@ -473,7 +491,7 @@ class Solid(Common):
 
         return v
 
-    def get_axis_extremity(self, x: bool = None, y: bool = None, z: bool = None):
+    def get_axis_extremity(self, x: bool = None, y: bool = None, z: bool = None) -> Vertex:
         verts = self.get_only_unique_vertices()
 
         if x is not None:
@@ -837,6 +855,9 @@ class DispVert(Common):
         self.offset_normal = Vertex(0, 0, 1)
         self.alpha = 0
         self.triangle_tag = None
+
+    def __str__(self):
+        return f"{self.normal} {self.distance}"
 
     def set(self, normal, distance):
         self.normal.set(*normal)
@@ -1274,6 +1295,19 @@ class Box(Common):
 
 class SolidGenerator:
     @staticmethod
+    def dev_material(solid, dev):
+        if dev == 1:
+            solid.set_texture("tools/toolsorigin")
+        elif dev == 2:
+            solid.set_texture("tools/toolsinvisibleladder")
+        elif dev == 3:
+            solid.set_texture("tools/toolsdotted")
+        elif dev == 4:
+            solid.set_texture("tools/bullet_hit_marker")
+        elif dev == 5:
+            solid.set_texture("tools/toolsblack")
+
+    @staticmethod
     def cube(vertex: Vertex, w, h, l, center=False, dev=0):
         x, y, z = vertex.export()
         f1 = Side(dic={"plane": f"({x + w} {y} {z + l}) ({x + w} {y} {z}) ({x} {y} {z})"})
@@ -1290,15 +1324,12 @@ class SolidGenerator:
         if center:
             solid.center = Vertex(x, y, z)
 
-        if dev == 1:
-            solid.set_texture("tools/toolsorigin")
-        elif dev == 2:
-            solid.set_texture("tools/toolsinvisibleladder")
+        SolidGenerator.dev_material(solid, dev)
 
         return solid
 
     @staticmethod
-    def displacement_triangle(vertex: Vertex, w, h, l):
+    def displacement_triangle(vertex: Vertex, w, h, l, dev=0):
         x, y, z = vertex.export()
         f1 = Side(dic={"plane": f"({x} {y} {z}) ({x} {y + h} {z}) ({x} {y + h} {z + l})"})
         f2 = Side(dic={"plane": f"({x} {y + h} {z}) ({x} {y} {z}) ({x + w} {y} {z})"})
@@ -1309,6 +1340,8 @@ class SolidGenerator:
         solid = Solid()
         solid.add_sides(f1, f2, f3, f4, f5)
         solid.editor = Editor()
+
+        SolidGenerator.dev_material(solid, dev)
 
         return solid
 
@@ -1447,8 +1480,12 @@ class VMF:
         elif name == Cordons.NAME:
             self.cordons = Cordons(dic, children)
 
-    def mark_vertex(self, vertex: Vertex, size=32):
-        self.add_solids(SolidGenerator.cube(vertex, size, size, size, True, 1))
+    def mark_vertex(self, vertex: Vertex, size=32, dev=1, visgroup=None):
+        s = SolidGenerator.cube(vertex, size, size, size, True, dev)
+        if visgroup is not None:
+            print(visgroup)
+            self.add_to_visgroup(visgroup, s)
+        self.add_solids(s)
 
     def blank_vmf(self):
         self.versioninfo = VersionInfo()

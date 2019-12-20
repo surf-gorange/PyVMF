@@ -2,9 +2,10 @@ from PyVMF import *
 from random import randint
 
 
-def triangulate_displacement(vmf: VMF, group: list, base_triangle: Solid = None, resolution=1, height=4):
+def triangulate_displacement(v, group: list, base_triangle: Solid = None, resolution=1, height=4):
     if base_triangle is None:
         base_triangle = SolidGenerator.displacement_triangle(Vertex(0, 0, 0), 1, 1, height)
+        base_triangle.move(0, -1, 0)
         base_triangle.set_texture("tools/toolstrigger")
 
     if resolution != 1 and resolution % 2 == 1:
@@ -31,13 +32,11 @@ def triangulate_displacement(vmf: VMF, group: list, base_triangle: Solid = None,
 
             verts = solid_side.get_vertices()
             rot_vector = Vector.vector_from_2_vertices(verts[1], verts[0])
-            angle = rot_vector.angle_to_origin()
+            angle = rot_vector.angle_to_origin()-90
             rot_vertex = verts[1]
 
             correct_size = solid.copy()
-            correct_size.rotate_z(solid.center_geo, angle)
-            correct_size.move(0, 0, 2000)
-            export_list.append(correct_size)
+            correct_size.rotate_z(solid.center_geo, -angle)
 
             size = correct_size.get_size()
             size.divide(disp.matrix_size_fix/resolution)
@@ -74,21 +73,29 @@ def triangulate_displacement(vmf: VMF, group: list, base_triangle: Solid = None,
                             direction = side[not flipped][i]
                             if direction is not None:
                                 for tri_vert in tris[j].get_3d_extremity(*direction)[1]:
-                                    tri_vert.move(0, 0, vert.normal.z * vert.distance)
-                                    print(tri_vert, "--", vert.normal.z*vert.distance)
-                                    vmf.mark_vertex(tri_vert)
+                                    lv = tris[j].get_linked_vertices(tri_vert)
+                                    for weird in lv:
+                                        weird.move(0, 0, vert.normal.z * vert.distance)
 
                         i += 1
 
                     tris_list.extend(tris)
 
             export_list.extend(tris_list)
-            f = solid.get_3d_extremity(False, True, True)[0]
-            diff = f.diff(tris_list[0].get_3d_extremity(False, True, True)[0])
-            diff.z = f.diff(Vertex(0, 0, 0)).z
+            # f = solid.get_3d_extremity(False, True, True)[0]
+            # diff = f.diff(tris_list[0].get_3d_extremity(False, True, True)[0])
+            # diff.z = f.diff(Vertex(0, 0, 0)).z
+
+            target = solid.center_geo
+            target = target - Vertex(size.x, size.y, 0)
+
+            center = v.get_group_center(tris_list, geo=True)
+            move = target.diff(center)
+
             for trio in tris_list:
-                trio.move(*diff.export())
-                #trio.rotate_z(solid.center_geo, -angle)
+                trio.rotate_z(center, angle)
+                trio.move(*move.export())
+
 
     return export_list
 
