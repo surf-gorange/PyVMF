@@ -2,7 +2,7 @@ from PyVMF import *
 from random import randint
 
 
-def triangulate_displacement(v, group: list, base_triangle: Solid = None, resolution=1, height=4):
+def triangulate_displacement(vmf: VMF, group: list, base_triangle: Solid = None, resolution=1, height=2):
     if base_triangle is None:
         base_triangle = SolidGenerator.displacement_triangle(Vertex(0, 0, 0), 1, 1, height)
         base_triangle.move(0, -1, 0)
@@ -35,10 +35,12 @@ def triangulate_displacement(v, group: list, base_triangle: Solid = None, resolu
             angle = rot_vector.angle_to_origin()-90
             rot_vertex = verts[1]
 
-            correct_size = solid.copy()
-            correct_size.rotate_z(solid.center_geo, -angle)
+            # correct_size = solid.copy()
+            # correct_size.rotate_z(solid.center_geo, -angle)
+            #
+            size = solid.get_size()
+            # size = Vertex(2048, 2048, 0)
 
-            size = correct_size.get_size()
             size.divide(disp.matrix_size_fix/resolution)
 
             triangle = base_triangle.copy()
@@ -87,29 +89,41 @@ def triangulate_displacement(v, group: list, base_triangle: Solid = None, resolu
             # diff.z = f.diff(Vertex(0, 0, 0)).z
 
             target = solid.center_geo
-            target = target - Vertex(size.x, size.y, 0)
 
-            center = v.get_group_center(tris_list, geo=True)
+            center = vmf.get_group_center(tris_list, geo=True)
+
             move = target.diff(center)
+
+            move.z = solid.get_axis_extremity(z=True).z
 
             for trio in tris_list:
                 trio.rotate_z(center, angle)
                 trio.move(*move.export())
 
-
     return export_list
 
 
 if __name__ == "__main__":
-    v = load_vmf("testing.vmf")
+    v = load_vmf("surf_pyramid.vmf")
 
-    d = v.get_all_from_visgroup("displacement")
+    all_displacements = [v.get_all_from_visgroup("8_disp"),
+                         v.get_all_from_visgroup("4_disp"),
+                         v.get_all_from_visgroup("2_disp"),
+                         v.get_all_from_visgroup("0_disp")]
 
-    # m = d[0].get_displacement_sides(matrix_instead_of_side=True)[0]
-    # for x, y, vert in m.rect(0, 0, m.size, m.size):
-    #     vert.set((0, 0, 1), x*x*6)
+    for i, quality in enumerate(all_displacements):
+        for displacement in quality:
+            t = triangulate_displacement(v, [displacement], resolution=2**i)
 
-    t = triangulate_displacement(d, v.get_all_from_visgroup("trigger")[0], 1)  # Set to 1 for perfect trigger coverage
-    v.add_solids(*t)
+            g = Group()
+            g.editor = Editor()
+            g.editor.color.random()
+            id = g.id
+            v.world.group.append(g)
 
-    v.export("testing2.vmf")
+            for solid in t:
+                solid.editor.groupid = id
+
+            v.add_solids(*t)
+
+    v.export("surf_pyramid_g.vmf")

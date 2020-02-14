@@ -4,119 +4,9 @@ import sys
 import time
 import math
 import operator
-# import pywavefront
-
-
-def num(s):  # Tries to turn string into int, then float, if all fails returns string
-    try:
-        return int(s)
-    except ValueError:
-        try:
-            return float(s)
-        except ValueError:
-            return str(s)
-
-
-class TempCategory:  # This class is used when reading the vmf file and when creating the vmf class later on
-    def __init__(self, category, indent):
-        self.category = category  # versioninfo, visgroups, world, solid, dispinfo, etc...
-        self.indent = indent
-        self.data = []  # Everything inside the curly brackets other than child categories (ex: "skyname" "sky_dust")
-        self.children = []  # List of all children categories (ex: side, dispinfo, editor, etc...)
-        self.current_child = None  # Used when going into nested children (ex: solid -> side -> dispinfo -> Normals)
-        self.dic = {}  # This is where all the data is stored when it's cleaned, used when creating VMF class
-
-    def __repr__(self):
-        return self.category
-
-    def add_line(self, line, indent):
-        diff = indent - self.indent  # Finding out how far into the nested children we need to go
-        c = self
-        for i in range(diff-1):
-            c = c.current_child
-        c.data.append(line)
-
-    def add_child(self, category, indent):
-        diff = indent - self.indent  # Same concept as self.add_line
-        c = self
-        for i in range(diff-1):
-            c = c.current_child
-
-        new_child = TempCategory(category, indent)
-        c.children.append(new_child)
-        c.current_child = new_child
-
-    def clean_up(self):
-        self.category = self.category.split()[0]  # We remove the tabs
-        for i in self.data:
-            clean = re.findall(r'\"(.*?)\"', i)  # We remove the double quotes and separate (example line: "id" "2688")
-            self.dic[clean[0]] = num(clean[1])  # The values, IF possible are turned into either ints or floats
-
-        for j in self.children:
-            j.clean_up()  # Nested function calls
-
-
-def file_parser(file):
-    with open(file, "r") as vmf:
-
-        indent = 0
-        previous_line = "versioninfo\n"  # We only know it's a category the next line (the curly brackets open)
-        extracted = []
-
-        for line in vmf.readlines()[1:]:
-            if "}" in line:
-                indent -= 1
-                if indent == 0:  # If indent is not 0 we know it's a child category and not a main category
-                    extracted.append(t)
-                continue
-
-            if "{" in line:
-                if indent > 0:  # If indent is not 0 we know it's a child category and not a main category
-                    # Open curly brackets ALWAYS follow a category, so we know the previous line is the category name
-                    t.add_child(previous_line, indent)
-                else:
-                    t = TempCategory(previous_line, indent)  # This is a main category (not a child category)
-                indent += 1
-                continue
-
-            if "\"" in line: t.add_line(line, indent)  # ALL lines with data have double quotes in them
-
-            previous_line = line
-
-    for c in extracted:
-        # clean_up is a recursive function we only need to call it on the main categories
-        c.clean_up()
-
-    return extracted  # This is used when creating a VMT class
-
-
-# def obj_to_solids(filename):
-#     scene = pywavefront.Wavefront(filename, collect_faces=False)
-#     for mesh in scene.meshes.values():
-#         yield coordinates_to_solid(mesh.untouched_faces)
-#
-#
-# def coordinates_to_solid(coordinate_list):
-#     s = Solid()
-#     s.editor = Editor()
-#     p = 1
-#     for face in coordinate_list:
-#         verts = ""
-#         for vert in face:
-#             verts+="("
-#             for xyz in vert:
-#                 verts += " "
-#                 verts += str(xyz)
-#             verts+=")"
-#
-#         f = Side({"id":p,
-#                   "plane":verts,
-#                   "uaxis":"[1 0 0 0] 0.5",
-#                   "vaxis":"[0 -1 0 0] 0.5"})
-#         p += 1
-#
-#         s.side.append(f)
-#     return s
+from random import randint
+from tools import *
+from importer import *
 
 
 class Common:
@@ -188,6 +78,11 @@ class Color:
             self.g = g
         if b != -1 and 0 < b < 256:
             self.b = b
+
+    def random(self):
+        self.r = randint(0, 255)
+        self.g = randint(0, 255)
+        self.b = randint(0, 255)
 
     def export(self):
         return self.r, self.g, self.b
@@ -436,7 +331,6 @@ class Solid(Common):
 
         return li
 
-
     def rotate_x(self, center, angle):
         for side in self.side:
             side.rotate_x(center, angle)
@@ -633,6 +527,17 @@ class Solid(Common):
     def is_simple_solid(self) -> bool:
         return len(self.side) <= 6
 
+    def link_vertices(self, similar=0.0):
+        vertex_list = []
+
+        for side in self.get_sides():
+            for i, vertex in enumerate(side.get_vertices()):
+                for vertex_check in vertex_list:
+                    if vertex.similar(vertex_check, similar):
+                        side.plane[i] = vertex_check
+                    else:
+                        vertex_list.append(vertex)
+
     def set_texture(self, new_material):
         for side in self.get_sides():
             side.material = new_material
@@ -714,9 +619,9 @@ class Side(Common):
 
         p = dic.pop("plane", "(0 0 0) (0 0 0) (0 0 0)")
         t = self._string_to_3x_vertex(p)
-        self.plane = (Vertex(t[0], t[1], t[2]),
+        self.plane = [Vertex(t[0], t[1], t[2]),
                       Vertex(t[3], t[4], t[5]),
-                      Vertex(t[6], t[7], t[8]))
+                      Vertex(t[6], t[7], t[8])]
 
         self.material = dic.pop("material", "TOOLS/TOOLSNODRAW")
 
@@ -1572,7 +1477,7 @@ class VMF:
                 self.file.write(f"{t}\"{item[0]}\" \"{str(item[1])}\"\n")
 
 
-def load_vmf(name):
+def load_vmf(name, merge_vertices=0.0001):
     if VMF.info_in_console:
         print("Loading VMF")
 
@@ -1580,6 +1485,10 @@ def load_vmf(name):
     f = file_parser(name)
     for section in f:
         v.add_section(section)
+
+    if merge_vertices != 0:
+        for solid in v.get_solids(True):
+            solid.link_vertices(merge_vertices)
 
     if VMF.info_in_console:
         print("VMF Loaded")
