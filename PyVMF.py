@@ -292,6 +292,24 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
 class Solid(Common):
     NAME = "solid"
 
+    """
+        Corresponds to blocks in hammer, any shape from pyramids to cylinders.
+
+        Note:
+            Test note.
+
+        Args:
+            dic (dict, optional): Dictionary holding all the variables to be initialized.
+            children (list, optional): Holds all the sides + editor information to be initialized.
+
+        Attributes:
+            id (int): Object id.
+            other (dic): Holds all variables that could not be resolved.
+            export_list (list): Holds the string name of variables to be exported into the .VMF file.
+            side (list): Holds all the sides.
+            editor (Editor): Holds editor information.
+        """
+
     def __init__(self, dic: dict = None, children: list = None):
         dic, children = self._dic_and_children(dic, children)
 
