@@ -2,7 +2,11 @@ from tools import num
 import re
 
 
-class TempCategory:  # This class is used when reading the vmf file and when creating the vmf class later on
+class TempCategory:
+
+
+
+    # This class is used when reading the vmf file and when creating the vmf class later on
     def __init__(self, category, indent):
         self.category = category  # versioninfo, visgroups, world, solid, dispinfo, etc...
         self.indent = indent

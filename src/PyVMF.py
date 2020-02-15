@@ -290,25 +290,16 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
 
 
 class Solid(Common):
-    NAME = "solid"
-
     """
-        Corresponds to blocks in hammer, any shape from pyramids to cylinders.
+    Corresponds to an individual solid just like in Hammer
+    
+    :param dic: All the values to be initialized, if empty default values are used.
+    :type dic: :obj:`dict` 
+    :param children: The :class:`Side`\'s and :class:`Editor` to be initialized
+    :type children: :obj:`list` 
+    """
 
-        Note:
-            Test note.
-
-        Args:
-            dic (dict, optional): Dictionary holding all the variables to be initialized.
-            children (list, optional): Holds all the sides + editor information to be initialized.
-
-        Attributes:
-            id (int): Object id.
-            other (dic): Holds all variables that could not be resolved.
-            export_list (list): Holds the string name of variables to be exported into the .VMF file.
-            side (list): Holds all the sides.
-            editor (Editor): Holds editor information.
-        """
+    NAME = "solid"
 
     def __init__(self, dic: dict = None, children: list = None):
         dic, children = self._dic_and_children(dic, children)
@@ -328,14 +319,38 @@ class Solid(Common):
                 self.editor = Editor(child.dic)
 
     def add_sides(self, *args):
+        """
+        Adds sides to the solid, note that no checks are made for validity
+
+        :param args: List of sides to be added
+        :type args: :obj:`list` of :class:`Side`
+        """
         self.side.extend(args)
 
     def move(self, x, y, z):
+        """
+        Moves all sides of the solid by the given amount in Hammer units
+
+        :param x:
+        :type x: :obj:`int` or :obj:`float`
+        :param y:
+        :type y: :obj:`int` or :obj:`float`
+        :param z:
+        :type z: :obj:`int` or :obj:`float`
+        """
         for side in self.side:
             for vert in side.plane:
                 vert.move(x, y, z)
 
     def get_linked_vertices(self, vertex: Vertex, similar=0.0) -> list:
+        """
+        :param vertex: The vertex to check against
+        :type vertex: :class:`Vertex`
+        :param similar: How close the vertices need to be for them to be considered similar
+        :type similar: :obj:`float`
+        :return: All vertices that are in close proximity to the given vertex itself included
+        :rtype: :obj:`list` of :class:`Vertex`
+        """
         li = []
 
         for vert in self.get_all_vertices():
@@ -350,14 +365,38 @@ class Solid(Common):
         return li
 
     def rotate_x(self, center, angle):
+        """
+        Rotates the solid around the x axis
+
+        :param center: The point to rotate around
+        :type center: :class:`Vertex`
+        :param angle: How much to rotate in degrees
+        :type angle: :obj:`int` or :obj:`float`
+        """
         for side in self.side:
             side.rotate_x(center, angle)
 
     def rotate_y(self, center, angle):
+        """
+        Rotates the solid around the y axis
+
+        :param center: The point to rotate around
+        :type center: :class:`Vertex`
+        :param angle: How much to rotate in degrees
+        :type angle: :obj:`int` or :obj:`float`
+        """
         for side in self.side:
             side.rotate_y(center, angle)
 
     def rotate_z(self, center, angle):
+        """
+        Rotates the solid around the z axis
+
+        :param center: The point to rotate around
+        :type center: :class:`Vertex`
+        :param angle: How much to rotate in degrees
+        :type angle: :obj:`int` or :obj:`float`
+        """
         for side in self.side:
             side.rotate_z(center, angle)
 
@@ -366,6 +405,19 @@ class Solid(Common):
             vert.flip(x, y, z)
 
     def scale(self, center, x=1.0, y=1.0, z=1.0):
+        """
+        Scales the solid using ratios.
+        For example using the center of the solid and values of 2 makes it twice as big
+
+        :param center: The point from which the scaling is based, use the center of the solid for traditional scaling
+        :type center: :class:`Vertex`
+        :param x: Scale ratio on the x axis
+        :type x: :obj:`int` or :obj:`float`
+        :param y: Scale ratio on the y axis
+        :type y: :obj:`int` or :obj:`float`
+        :param z: Scale ratio on the z axis
+        :type z: :obj:`int` or :obj:`float`
+        """
         x -= 1
         y -= 1
         z -= 1
@@ -376,6 +428,14 @@ class Solid(Common):
 
     @property
     def center(self):
+        """
+        Finds the center of the solid based on the average of all vertices.
+        **Can behave unexpectedly** as faces only consists of 3 verticies so the center might be off by a tiny amount
+        For a more reliable option see :func:`~Solid.center_geo`
+
+        :return: The average center of the solid
+        :rtype: :class:`Vertex`
+        """
         v = Vertex(0, 0, 0)
         vert_list = self.get_only_unique_vertices()
         for vert in vert_list:
@@ -385,10 +445,23 @@ class Solid(Common):
 
     @center.setter
     def center(self, vertex):
+        """
+        Moves the solid based on it's center to the new position
+
+        :param vertex: The new position assumed by the solid center
+        :type vertex: :class:`Vertex`
+        """
         self.move(*vertex.diff(self.center).export())
 
     @property
     def center_geo(self):
+        """
+        Finds the center of the solid based on the extremities of all 3 axes.
+        More reliable than :func:`~Solid.center`
+
+        :return: The geometric center of the solid
+        :rtype: :class:`Vertex`
+        """
         v = Vertex(0, 0, 0)
 
         x = self.get_axis_extremity(x=False).x
@@ -404,6 +477,19 @@ class Solid(Common):
         return v
 
     def get_axis_extremity(self, x: bool = None, y: bool = None, z: bool = None) -> Vertex:
+        """
+        Finds the vertex that is the furthest on the given axis, **only 1 axis per method call**,
+        see :func:`~Solid.get_3d_extremity`
+
+        :param x: False for negative side of the axis, True for positive side
+        :type x: :obj:`bool`
+        :param y: False for negative side of the axis, True for positive side
+        :type y: :obj:`bool`
+        :param z: False for negative side of the axis, True for positive side
+        :type z: :obj:`bool`
+        :return: The vertex the furthest most on the given axis
+        :rtype: :class:`Vertex`
+        """
         verts = self.get_only_unique_vertices()
 
         if x is not None:
@@ -421,6 +507,18 @@ class Solid(Common):
         raise ValueError("No axis given")
 
     def get_3d_extremity(self, x: bool = None, y: bool = None, z: bool = None):
+        """
+        Finds the vertices that are the furthest on the given axes, as well as ties
+
+        :param x: False for negative side of the axis, True for positive side
+        :type x: :obj:`bool`
+        :param y: False for negative side of the axis, True for positive side
+        :type y: :obj:`bool`
+        :param z: False for negative side of the axis, True for positive side
+        :type z: :obj:`bool`
+        :return: The vertex furthest most on the given axes, and the ties, **the champion vertex is included**
+        :rtype: :class:`Vertex`, :obj:`list` of :class:`Vertex`
+        """
         verts = self.get_only_unique_vertices()
 
         for vert in verts:
@@ -452,15 +550,30 @@ class Solid(Common):
         return best, ties
 
     def get_all_vertices(self):
+        """
+        Finds all vertices on the solid, including overlapping ones from the different sides, for only unique vertices
+        use :func:`~Solid.get_only_unique_vertices`
+
+        :return: All the vertices on the solid
+        :rtype: :obj:`list` of :class:`Vertex`
+        """
         vertex_list = []
         for side in self.side:
             vertex_list.extend(side.plane)
         return vertex_list
 
     def get_sides(self):
+        """
+        :return: All the sides on the solid
+        :rtype: :obj:`list` of :class:`Side`
+        """
         return self.side
 
     def get_size(self) -> Vertex:
+        """
+        :return: the total size of the bounding rectangle around the solid
+        :rtype: :class:`Vertex`
+        """
         x = []
         y = []
         z = []
@@ -472,6 +585,12 @@ class Solid(Common):
         return Vertex(max(x) - min(x), max(y) - min(y), max(z) - min(z))
 
     def get_displacement_sides(self, matrix_instead_of_side=False) -> list:
+        """
+        :param matrix_instead_of_side: Provides directly the :class:`Matrix` instead of :class:`DispInfo`
+        :type matrix_instead_of_side: :obj:`bool`
+        :return: the sides with displacements on them
+        :rtype: :obj:`list` of :class:`DispInfo` or :obj:`list` of :class:`Matrix`
+        """
         li = []
         for side in self.side:
             if side.dispinfo is not None:
@@ -482,6 +601,14 @@ class Solid(Common):
         return li
 
     def get_texture_sides(self, name: str, exact=False) -> list:
+        """
+        :param name: The name of the texture including path (ex: tools/toolsnodraw)
+        :type name: :obj:`string`
+        :param exact: Determines if the material has to be letter for letter the same or just contain the string
+        :type exact: :obj:`bool`
+        :return: The sides using the given texture
+        :rtype: :obj:`list` of :class:`Side`
+        """
         li = []
         for side in self.side:
             if not exact:
@@ -493,6 +620,13 @@ class Solid(Common):
         return li
 
     def get_only_unique_vertices(self):
+        """
+        Finds all unique vertices on the solid, **you should not use this for vertex manipulation as changing one
+        doesn't change all of them**. See :func:`~Solid.get_all_vertices`
+
+        :return: all unique vertices
+        :rtype: :obj:`list` of :class:`Vertex`
+        """
         vertex_list = []
         for side in self.side:
             for vertex in side.plane:
@@ -502,6 +636,14 @@ class Solid(Common):
         return vertex_list
 
     def has_texture(self, name: str, exact=False) -> bool:
+        """
+        :param name: The name of the texture including path (ex: tools/toolsnodraw)
+        :type name: :obj:`string`
+        :param exact: Determines if the material has to be letter for letter the same or just contain the string
+        :type exact: :obj:`bool`
+        :return: if any sides of the solid contain the given texture
+        :rtype: :obj:`bool`
+        """
         for side in self.side:
             if not exact:
                 if name.upper() in side.material:
@@ -512,11 +654,32 @@ class Solid(Common):
         return False
 
     def replace_texture(self, old_material: str, new_material: str):
+        """
+        Checks all the sides if they have the given texture, if so replace it
+
+        :param old_material: The texture to check
+        :type old_material: :obj:`String`
+        :param new_material: The texture to replace the old one with
+        :type new_material: :obj:`String`
+        """
         for side in self.side:
             if side.material == old_material:
                 side.material = new_material
 
     def naive_subdivide(self, x=1, y=1, z=1) -> list:
+        """
+        Naively subdivides a copy of the solid, works best for rectangular shapes. It's naive because it scales down
+        the solid then creates an array from that
+
+        :param x: Amount of cuts on the x axis
+        :type x: :obj:`int`
+        :param y: Amount of cuts on the y axis
+        :type y: :obj:`int`
+        :param z: Amount of cuts on the z axis
+        :type z: :obj:`int`
+        :return: Solids from a subdivided solid
+        :rtype: :obj:`list` of :class:`Solid`
+        """
         li = []
 
         s = self.copy()
@@ -543,9 +706,18 @@ class Solid(Common):
         return li
 
     def is_simple_solid(self) -> bool:
+        """
+        :return: A solid is considered simple if it has 6 or less sides
+        :rtype: :obj:`bool`
+        """
         return len(self.side) <= 6
 
     def link_vertices(self, similar=0.0):
+        """
+        Tries to link all the vertices that are similiar
+
+        :param similar:
+        """
         vertex_list = []
 
         for side in self.get_sides():
