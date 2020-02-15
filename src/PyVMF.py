@@ -10,9 +10,19 @@ from importer import *
 
 
 class Common:
+    """
+    The parent class to all VMF classes that need to be exported to the .VMF file.
+    """
+
     ID = 0
 
     def export(self):
+        """
+        Gets all the variables than need to be exported into the .VMF file
+
+        :return: All predefined (in `export_list`) variable names and their associated values
+        :rtype: :obj:`dict`, :obj:`dict`
+        """
         d = {}
         for item in self.export_list:
             t = getattr(self, item)
@@ -20,10 +30,21 @@ class Common:
         return d, self.other
 
     def export_children(self):
+        """
+        Gets all the children classes
+
+        :return: All predefined children classes
+        :rtype: :obj:`list` of :class:`Common` instances
+        """
         return []
 
     def copy(self):
-        """Copies a category using the copy.deepcopy function"""
+        """
+        Copies the class using :func:`~copy.deepcopy`
+
+        :return: A deepcopy of itself
+        :rtype: :class:`Common` instance
+        """
         return deepcopy(self)
 
     def ids(self):
@@ -63,26 +84,49 @@ class Common:
 
 
 class Color:
+    """
+    Simple RGB color class
+
+    :param r: Value for RED between 0 and 255
+    :type r: :obj:`int`
+    :param g: Value for GREEN between 0 and 255
+    :type g: :obj:`int`
+    :param b: Value for BLUE between 0 and 255
+    :type b: :obj:`int`
+    """
+
     def __init__(self, r, g, b):
-        self.r = r
-        self.g = g
-        self.b = b
+        self.r = 0
+        self.g = 0
+        self.b = 0
+        self.set(r, g, b)
 
     def __str__(self):
         return f"{self.r} {self.g} {self.b}"
 
     def set(self, r=-1, g=-1, b=-1):
-        if r != -1 and 0 < r < 256:
+        """
+        Sets the color
+
+        :param r: Value for RED between 0 and 255, if equals to -1 keeps previous value
+        :type r: :obj:`int`
+        :param g: Value for GREEN between 0 and 255, if equals to -1 keeps previous value
+        :type g: :obj:`int`
+        :param b: Value for BLUE between 0 and 255, if equals to -1 keeps previous value
+        :type b: :obj:`int`
+        """
+        if r != -1 and 0 <= r < 256:
             self.r = r
-        if g != -1 and 0 < g < 256:
+        if g != -1 and 0 <= g < 256:
             self.g = g
-        if b != -1 and 0 < b < 256:
+        if b != -1 and 0 <= b < 256:
             self.b = b
 
     def random(self):
-        self.r = randint(0, 255)
-        self.g = randint(0, 255)
-        self.b = randint(0, 255)
+        """
+        Sets a random color
+        """
+        self.set(randint(0, 255), randint(0, 255), randint(0, 255))
 
     def export(self):
         return self.r, self.g, self.b
@@ -201,13 +245,24 @@ class World(Common):
 
 
 class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_vertex function)
+    """
+    Corresponds to a single position on the Hammer grid
+
+    :param x: x position
+    :type x: :obj:`int` or :obj:`float`
+    :param y: y position
+    :type y: :obj:`int` or :obj:`float`
+    :param z: z position
+    :type z: :obj:`int` or :obj:`float`
+    """
+
     def __init__(self, x, y, z):
         self.x = x
         self.y = y
         self.z = z
 
         self.sorting = 0  # Used in solid get_3d_extremity
-        self.normal = True
+        self.normal = True  # Vertices are represented differently in the VMF depending on the class
 
     def __str__(self):
         if self.normal:
@@ -225,46 +280,120 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
         return Vertex(self.x - other.x, self.y - other.y, self.z - other.z)
 
     def similar(self, other, accuracy=0.001):
+        """
+        Compares the current vertex with the given one to see if they are similar
+
+        :param other:
+        :param accuracy: Distance from the current vertex to be considered similar (in Hammer units)
+        :type accuracy: :obj:`float`
+        :return: If the given vertex is within the proximity of the current vertex
+        :rtype: :obj:`bool`
+        """
         return ((abs(self.x - other.x) < accuracy) and
                 (abs(self.y - other.y) < accuracy) and
                 (abs(self.z - other.z) < accuracy))
 
     def divide(self, amount):
+        """
+        Divides all the axes uniformly by the given amount (for separate division see :func:`~Vertex.divide_separate`)
+
+        :param amount: How much to divide each axis by
+        :type amount: :obj:`int` or :obj:`float`
+        """
         self.x /= amount
         self.y /= amount
         self.z /= amount
 
     def divide_separate(self, x, y, z):
+        """
+        Divides all the axes separatedly by the given amounts (for uniform division see :func:`~Vertex.divide`)
+
+        :param x: Amount to divide x axis by
+        :type x: :obj:`int` or :obj:`float`
+        :param y: Amount to divide y axis by
+        :type y: :obj:`int` or :obj:`float`
+        :param z: Amount to divide z axis by
+        :type z: :obj:`int` or :obj:`float`
+        """
         self.x /= x
         self.y /= y
         self.z /= z
 
     def diff(self, other):
-        return Vertex(self.x - other.x, self.y - other.y, self.z - other.z)
+        """
+        :param other: The vertex to differentiate with
+        :return: The difference in distance between 2 vertices
+        :rtype: :class:`Vertex`
+        """
+        return self - other
 
     def move(self, x, y, z):
+        """
+        Moves the vertex by the given amount
+
+        :param x: Amount to move the x axis by
+        :type x: :obj:`int` or :obj:`float`
+        :param y: Amount to move the y axis by
+        :type y: :obj:`int` or :obj:`float`
+        :param z: Amount to move the z axis by
+        :type z: :obj:`int` or :obj:`float`
+        """
         self.x += x
         self.y += y
         self.z += z
 
     def set(self, x, y, z):
+        """
+        Sets the vertex position to the given position
+
+        :param x: New x position
+        :type x: :obj:`int` or :obj:`float`
+        :param y: New y position
+        :type y: :obj:`int` or :obj:`float`
+        :param z: New z position
+        :type z: :obj:`int` or :obj:`float`
+        """
         self.x = x
         self.y = y
         self.z = z
 
     def rotate_z(self, center, angle):
+        """
+        Rotates the vertex around the z axis
+
+        :param center: The point to rotate around
+        :type center: :class:`Vertex`
+        :param angle: How much to rotate in degrees
+        :type angle: :obj:`int` or :obj:`float`
+        """
         a = math.radians(angle)
         new_x = center.x + (self.x - center.x)*math.cos(a) - (self.y - center.y)*math.sin(a)
         new_y = center.y + (self.x - center.x)*math.sin(a) + (self.y - center.y)*math.cos(a)
         self.set(new_x, new_y, self.z)
 
     def rotate_y(self, center, angle):
+        """
+        Rotates the vertex around the y axis
+
+        :param center: The point to rotate around
+        :type center: :class:`Vertex`
+        :param angle: How much to rotate in degrees
+        :type angle: :obj:`int` or :obj:`float`
+        """
         a = math.radians(angle)
         new_x = center.x + (self.x - center.x) * math.cos(a) - (self.z - center.z) * math.sin(a)
         new_z = center.z + (self.x - center.x) * math.sin(a) + (self.z - center.z) * math.cos(a)
         self.set(new_x, self.y, new_z)
 
     def rotate_x(self, center, angle):
+        """
+        Rotates the vertex around the x axis
+
+        :param center: The point to rotate around
+        :type center: :class:`Vertex`
+        :param angle: How much to rotate in degrees
+        :type angle: :obj:`int` or :obj:`float`
+        """
         a = math.radians(angle)
         new_y = center.y + (self.y - center.y) * math.cos(a) - (self.z - center.z) * math.sin(a)
         new_z = center.z + (self.y - center.y) * math.sin(a) + (self.z - center.z) * math.cos(a)
@@ -279,6 +408,9 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
             self.z += 2 * (z - self.z)
 
     def align_to_grid(self):
+        """
+        Turns x, y and z into integers
+        """
         self.x = int(self.x)
         self.y = int(self.y)
         self.z = int(self.z)
@@ -346,7 +478,7 @@ class Solid(Common):
         """
         :param vertex: The vertex to check against
         :type vertex: :class:`Vertex`
-        :param similar: How close the vertices need to be for them to be considered similar
+        :param similar: Distance between vertices to be considered similar (in Hammer units)
         :type similar: :obj:`float`
         :return: All vertices that are in close proximity to the given vertex itself included
         :rtype: :obj:`list` of :class:`Vertex`
@@ -430,7 +562,7 @@ class Solid(Common):
     def center(self):
         """
         Finds the center of the solid based on the average of all vertices.
-        **Can behave unexpectedly** as faces only consists of 3 verticies so the center might be off by a tiny amount
+        **Can behave unpredictably** as faces only consists of 3 verticies so the center might be off by a tiny amount
         For a more reliable option see :func:`~Solid.center_geo`
 
         :return: The average center of the solid
@@ -729,10 +861,19 @@ class Solid(Common):
                         vertex_list.append(vertex)
 
     def set_texture(self, new_material):
+        """
+        Sets the given texture on all sides
+
+        :param new_material: The texture to replace them all
+        :type new_material: :obj:`str`
+        """
         for side in self.get_sides():
             side.material = new_material
 
     def remove_all_displacements(self):
+        """
+        Removes all displacements from the solid
+        """
         for side in self.side:
             side.remove_displacement()
 
@@ -800,6 +941,17 @@ class Group(Common):
 
 
 class Side(Common):
+    """
+    Corresponds to a face/side of a solid. Sides are defined by 3 vertices, the combination of which define an
+    infinitely large plane, source calculates the intersection between these planes to determine where the edges are.
+    This is not currently calculated in PyVMF, so some methods may behave unpredictably.
+
+    :param dic: All the values to be initialized, if empty default values are used.
+    :type dic: :obj:`dict`
+    :param children: Holds a potential displacement :class:`DispInfo` to be initialized
+    :type children: :obj:`list`
+    """
+
     NAME = "side"
 
     def __init__(self, dic: dict = None, children: list = None):
@@ -836,18 +988,52 @@ class Side(Common):
         return f"({self.plane[0]}) ({self.plane[1]}) ({self.plane[2]})"
 
     def move(self, x, y, z):
+        """
+        Moves the side by the given amount
+
+        :param x: Amount to move the x axis by
+        :type x: :obj:`int` or :obj:`float`
+        :param y: Amount to move the y axis by
+        :type y: :obj:`int` or :obj:`float`
+        :param z: Amount to move the z axis by
+        :type z: :obj:`int` or :obj:`float`
+        """
         for vertex in self.plane:
             vertex.move(x, y, z)
 
     def rotate_x(self, center, angle):
+        """
+        Rotates the side around the x axis
+
+        :param center: The point to rotate around
+        :type center: :class:`Vertex`
+        :param angle: How much to rotate in degrees
+        :type angle: :obj:`int` or :obj:`float`
+        """
         for vert in self.plane:
             vert.rotate_x(center, angle)
 
     def rotate_y(self, center, angle):
+        """
+        Rotates the vertex around the y axis
+
+        :param center: The point to rotate around
+        :type center: :class:`Vertex`
+        :param angle: How much to rotate in degrees
+        :type angle: :obj:`int` or :obj:`float`
+        """
         for vert in self.plane:
             vert.rotate_y(center, angle)
 
     def rotate_z(self, center, angle):
+        """
+        Rotates the vertex around the z axis
+
+        :param center: The point to rotate around
+        :type center: :class:`Vertex`
+        :param angle: How much to rotate in degrees
+        :type angle: :obj:`int` or :obj:`float`
+        """
         for vert in self.plane:
             vert.rotate_z(center, angle)
 
@@ -857,15 +1043,26 @@ class Side(Common):
             vert.flip(x, y, z)
 
     def get_vertices(self):
+        """
+        :return: All 3 vertices that define the plane
+        :rtype: :obj:`list`
+        """
         return self.plane
 
     def get_displacement(self):
+        """
+        :return: The current displacement, only 1 per side
+        :rtype: :class:`DispInfo` or :obj:`None`
+        """
         return self.dispinfo
 
     def get_vector(self):
         raise ValueError("Vectors not implemented yet")
 
     def remove_displacement(self):
+        """
+        Removes the diplacement from the side
+        """
         self.dispinfo = None
 
     def export(self):
@@ -885,6 +1082,10 @@ class Side(Common):
 
 
 class DispInfo(Common):
+    """
+    Keeps track of all the different displacement settings and values
+    """
+
     NAME = "dispinfo"
 
     def __init__(self, dic: dict = None, children: list = None):

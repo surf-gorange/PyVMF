@@ -103,27 +103,27 @@ def triangulate_displacement(vmf: VMF, group: list, base_triangle: Solid = None,
     return export_list
 
 
-if __name__ == "__main__":
-    v = load_vmf("surf_pyramid.vmf")
-
-    all_displacements = [v.get_all_from_visgroup("8_disp"),
-                         v.get_all_from_visgroup("4_disp"),
-                         v.get_all_from_visgroup("2_disp"),
-                         v.get_all_from_visgroup("0_disp")]
-
-    for i, quality in enumerate(all_displacements):
-        for displacement in quality:
-            t = triangulate_displacement(v, [displacement], resolution=2**i)
-
-            g = Group()
-            g.editor = Editor()
-            g.editor.color.random()
-            id = g.id
-            v.world.group.append(g)
-
-            for solid in t:
-                solid.editor.groupid = id
-
-            v.add_solids(*t)
-
-    v.export("surf_pyramid_g.vmf")
+# if __name__ == "__main__":
+#     v = load_vmf("surf_pyramid.vmf")
+#
+#     all_displacements = [v.get_all_from_visgroup("8_disp"),
+#                          v.get_all_from_visgroup("4_disp"),
+#                          v.get_all_from_visgroup("2_disp"),
+#                          v.get_all_from_visgroup("0_disp")]
+#
+#     for i, quality in enumerate(all_displacements):
+#         for displacement in quality:
+#             t = triangulate_displacement(v, [displacement], resolution=2**i)
+#
+#             g = Group()
+#             g.editor = Editor()
+#             g.editor.color.random()
+#             id = g.id
+#             v.world.group.append(g)
+#
+#             for solid in t:
+#                 solid.editor.groupid = id
+#
+#             v.add_solids(*t)
+#
+#     v.export("surf_pyramid_g.vmf")
