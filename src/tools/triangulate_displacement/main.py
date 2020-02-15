@@ -1,4 +1,4 @@
-from src.PyVMF import *
+from PyVMF import *
 from random import randint
 
 

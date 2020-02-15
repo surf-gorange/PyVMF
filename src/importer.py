@@ -1,4 +1,4 @@
-from src.tools import num
+from tools import num
 import re
 
 

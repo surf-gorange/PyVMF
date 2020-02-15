@@ -5,8 +5,8 @@ import time
 import math
 import operator
 from random import randint
-from src.tools import *
-from src.importer import *
+from tools import *
+from importer import *
 
 
 class Common:
