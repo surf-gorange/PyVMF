@@ -14,6 +14,8 @@ Surf Ramp | Wavy Displacement | Bhop Hell
 
 Check out the wiki for more information: https://github.com/GorangeNinja/PyVMF/wiki/Getting-Started
 
+Check out the docs for explanations: https://pyvmf.readthedocs.io/en/latest/genindex.html
+
 # License
 
 MIT License (see license file)
