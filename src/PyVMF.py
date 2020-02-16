@@ -64,7 +64,7 @@ class Common:
 
     def _string_to_color(self, string: str):
         temp = string.split()
-        return Color(temp[0], temp[1], temp[2])
+        return Color(int(temp[0]), int(temp[1]), int(temp[2]))
 
     def _string_to_uvaxis(self, string: str):
         reg = re.sub(r'[\[\]]', '', string).split()
