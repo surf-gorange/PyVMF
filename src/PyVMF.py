@@ -284,6 +284,7 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
         Compares the current vertex with the given one to see if they are similar
 
         :param other:
+        :type other: :class:`Vertex`
         :param accuracy: Distance from the current vertex to be considered similar (in Hammer units)
         :type accuracy: :obj:`float`
         :return: If the given vertex is within the proximity of the current vertex
@@ -1176,6 +1177,13 @@ class TriangleTag(Common):
 
 
 class Matrix(Common):
+    """
+    A grid for keeping track of the displacement values.
+
+    :param size: The size of the 2 dimensional grid
+    :type size: :obj:`int`
+    """
+
     def __init__(self, size: int):
         self.size = size
         self.matrix = [[DispVert() for y in range(self.size)] for x in range(self.size)]
@@ -1184,18 +1192,46 @@ class Matrix(Common):
         return str(self.matrix)
 
     def get(self, x, y):
+        """
+        :param x: Position x in the matrix
+        :type x: :obj:`int`
+        :param y: Position y in the matrix
+        :type y: :obj:`int`
+        :return: Displacement information at the given position
+        :rtype: :class:`DispVert`
+        """
         return self.matrix[x][y]
 
     def row(self, y):
+        """
+        :param y: The row to get
+        :type y: :obj:`int`
+        :return: All the disp verts on the given row
+        :rtype: :obj:`list` of :class:`DispVert`
+        """
         li = []
         for x in range(self.size):
             li.append(self.matrix[x][y])
         return li
 
     def column(self, x):
+        """
+        :param x: The column to get
+        :type x: :obj:`int`
+        :return: All the disp verts on the given column
+        :rtype: :obj:`list` of :class:`DispVert`
+        """
         return self.matrix[x]
 
     def rect(self, x, y, w, h):
+        """
+        :param x: Position x in the matrix
+        :param y: Position y in the matrix
+        :param w: Width of the rectangle
+        :param h: Height of the rectangle
+        :return: Yields all the disp verts inside the given rectangle
+        :rtype: :obj:`iterator` of :class:`DispVert`
+        """
         for y2 in range(y, y + h):
             for x2 in range(x, x + w):
                 yield x2, y2, self.get(x2, y2)
@@ -1206,12 +1242,32 @@ class Matrix(Common):
                 yield x2, y2, self.get(x2, self.size - y2 - 1)
 
     def extract_dic(self, dic, a_var=1, triangle=False):
+        """
+        Extracts the data from the .VMF file string, you shouldn't need to use this
+
+        :param dic: Holds all the rows
+        :type dic: :obj:`dict` of :obj:`str`: :obj:`str`
+        :param a_var: How many variables to group, use 3 to group the 'x y z' format, if single int use 1
+        :type a_var: :obj:`int`
+        :param triangle: :class:`TriangleTags` holds 1 less value than all other displacement variables
+        :type triangle: :obj:`bool`
+        :return: The x and y position in the matrix and the values
+        :rtype: :obj:`int`, :obj:`int`, :obj:`list` of :obj:`str`
+        """
         for y in range(self.size - triangle):
             t = dic.pop(f"row{y}").split(" ")
             for x in range((self.size - triangle) * a_var):
                 yield x, y, t
 
     def export_attr(self, attribute):
+        """
+        Exports the data in .VMF file ready format, used when exporting the PyVMF, you shouldn't need to use this
+
+        :param attribute: Which of the attributes to export (normals, distances, ...)
+        :type attribute: :obj:`str`
+        :return: Row to values association
+        :rtype: :obj:`dict` of :obj:`str`: :obj:`str`
+        """
         e = {}
         for y in range(self.size):
             current_row = f"row{y}"
@@ -1590,8 +1646,20 @@ class Box(Common):
 
 
 class SolidGenerator:
+    """
+    Generates solids from scratch, remember you still need to add them to :class:`VMF` using :func:`~VMF.add_solids`
+    """
+
     @staticmethod
-    def dev_material(solid, dev):
+    def dev_material(solid: Solid, dev: int):
+        """
+        Changes the material of the solid to single color dev textures, quick and useful when testing
+
+        :param solid: The target solid
+        :type solid: :class:`Solid`
+        :param dev: The target texture between 1 and 5
+        :type dev: :obj:`int`
+        """
         if dev == 1:
             solid.set_texture("tools/toolsorigin")
         elif dev == 2:
@@ -1605,6 +1673,24 @@ class SolidGenerator:
 
     @staticmethod
     def cube(vertex: Vertex, w, h, l, center=False, dev=0):
+        """
+        Generates a solid cube
+
+        :param vertex: Start position from which to build the cube
+        :type vertex: :class:`Vertex`
+        :param w: Width of the cube
+        :type w: :obj:`int`
+        :param h: Height of the cube
+        :type h: :obj:`int`
+        :param l: Length of the cube
+        :type l: :obj:`int`
+        :param center: If set to True centers the solid on the vertex
+        :type center: :obj:`bool`
+        :param dev: If set, changes the cube texture, see :func:`~SolidGenerator.dev_material`
+        :type dev: :obj:`int`
+        :return: A generated solid
+        :rtype: :class:`Solid`
+        """
         x, y, z = vertex.export()
         f1 = Side(dic={"plane": f"({x + w} {y} {z + l}) ({x + w} {y} {z}) ({x} {y} {z})"})
         f2 = Side(dic={"plane": f"({x + w} {y + h} {z}) ({x + w} {y + h} {z + l}) ({x} {y + h} {z + l})"})
@@ -1626,6 +1712,22 @@ class SolidGenerator:
 
     @staticmethod
     def displacement_triangle(vertex: Vertex, w, h, l, dev=0):
+        """
+        Generates a displacement triangle (L shaped viewed from above)
+
+        :param vertex: Start position from which to build the triangle
+        :type vertex: :class:`Vertex`
+        :param w: Width of the triangle
+        :type w: :obj:`int`
+        :param h: Height of the triangle
+        :type h: :obj:`int`
+        :param l: Length of the triangle
+        :type l: :obj:`int`
+        :param dev: If set, changes the triangle texture, see :func:`~SolidGenerator.dev_material`
+        :type dev: :obj:`int`
+        :return: A generated triangle
+        :rtype: :class:`Solid`
+        """
         x, y, z = vertex.export()
         f1 = Side(dic={"plane": f"({x} {y} {z}) ({x} {y + h} {z}) ({x} {y + h} {z + l})"})
         f2 = Side(dic={"plane": f"({x} {y + h} {z}) ({x} {y} {z}) ({x + w} {y} {z})"})
@@ -1643,6 +1745,10 @@ class SolidGenerator:
 
 
 class VMF:
+    """
+    Equivalent to a single .VMF file, holds all categories and all sub-categories
+    """
+
     info_in_console = False  # Prints info like "VMF loaded", progress bar, etc...
 
     def __init__(self):
@@ -1666,6 +1772,16 @@ class VMF:
         self.file = None
 
     def get_solids(self, include_hidden=False, include_solid_entities=True):
+        """
+        Gets all the solids
+
+        :param include_hidden: Whether to include quick hidden solids (Hammer "h" hotkey) or not
+        :type include_hidden: :obj:`bool`
+        :param include_solid_entities: Whether to include solid entities (ex: trigger_teleport) or not
+        :type include_solid_entities: :obj:`bool`
+        :return: Solids in the VMF
+        :rtype: :obj:`list` of :class:`Solid`
+        """
         li = []
         li.extend(self.world.solid)
         if include_hidden:
@@ -1686,6 +1802,16 @@ class VMF:
         return li
 
     def get_entities(self, include_hidden=False, include_solid_entities=False):
+        """
+        Gets all the entities
+
+        :param include_hidden: Whether to include quick hidden solids (Hammer "h" hotkey) or not
+        :type include_hidden: :obj:`bool`
+        :param include_solid_entities: Whether to include solid entities (ex: trigger_teleport) or not
+        :type include_solid_entities: :obj:`bool`
+        :return: Entities in the VMF
+        :rtype: :obj:`list` of :class:`Entity`
+        """
         li = []
         if include_hidden:
             for h in self.hidden:
@@ -1699,13 +1825,26 @@ class VMF:
 
         return li
 
-    def get_solids_and_entities(self, include_hidden=False, direct_solid_from_entity=True):
-        # direct_solid_from_entity is if you want the entity instead of getting directly the solid from the entity
-        if direct_solid_from_entity:
-            return self.get_solids(include_hidden) + self.get_entities(include_hidden)
+    def get_solids_and_entities(self, include_hidden=False):
+        """
+        Gets all the solids and entities
+
+        :param include_hidden: Whether to include quick hidden solids (Hammer "h" hotkey) or not
+        :type include_hidden: :obj:`bool`
+        :return: Solids and entities in the VMF
+        :rtype: :obj:`list` of (:class:`Entity` or :class:`Solid`)
+        """
         return self.get_solids(include_hidden, False) + self.get_entities(include_hidden, True)
 
     def get_all_from_visgroup(self, name: str):
+        """
+        Gets everything from the visgroup
+
+        :param name: Name of the visgroup
+        :type name: :obj:`str`
+        :return: Solids and entities in the visgroup
+        :rtype: :obj:`list` of (:class:`Entity` or :class:`Solid`)
+        """
         v_id = None
         li = []
         for visgroup in self.visgroups.get_visgroups():
@@ -1713,13 +1852,22 @@ class VMF:
                 v_id = visgroup.visgroupid
 
         if v_id is not None:
-            for item in self.get_solids_and_entities(direct_solid_from_entity=False):
+            for item in self.get_solids_and_entities():
                 if item.editor.visgroupid == v_id:
                     li.append(item)
 
         return li
 
-    def get_group_center(self, group: list, geo=False):
+    def get_group_center(self, group: list, geo=False) -> Vertex:
+        """
+        Gets a vertex based on the average center of all the solids
+
+        :param group: All the solids to include
+        :type group: :obj:`list` of :class:`Solid`
+        :param geo: Whether to use the geometric center or not, see :func:`~Solid.center` and :func:`~Solid.center_geo`
+        :return: The average center position of all the solids
+        :rtype: :class:`Vertex`
+        """
         v = Vertex(0, 0, 0)
         for solid in group:
             if geo:
@@ -1730,9 +1878,25 @@ class VMF:
         return v
 
     def sort_by_attribute(self, category_list: list, attr: str):
+        """
+        Sorts the list based on one of their attributes
+
+        :param category_list: All the elements to sort
+        :type category_list: :obj:`list`
+        :param attr: The attribute to sort by, for example `center_geo.x` for :class:`Solid`
+        :return: The elements sorted in increasing order
+        :rtype: :obj:`list`
+        """
         return sorted(category_list, key=operator.attrgetter(attr))
 
     def add_to_visgroup(self, name: str, *args):
+        """
+        Adds the given elements to an existing visgroup
+
+        :param name: Name of the visgroup
+        :type name: :obj:`str`
+        :param args: Elements to add to the visgroup
+        """
         v_id = None
         for visgroup in self.visgroups.get_visgroups():
             if visgroup.name == name:
@@ -1741,13 +1905,29 @@ class VMF:
         for item in args:
             item.editor.visgroupid = v_id
 
-    def add_solids(self, *args):
+    def add_solids(self, *args: Solid):
+        """
+        Adds solids to the world
+
+        :param args: Solids to add
+        """
         self.world.solid.extend(args)
 
-    def add_entities(self, *args):
+    def add_entities(self, *args: Entity):
+        """
+        Adds entities to the entity list
+
+        :param args: Entities to add
+        """
         self.entity.extend(args)
 
     def add_section(self, section: TempCategory):
+        """
+        Adds temporary categories to the VMF, used when reading .VMF files, you shouldn't need to use this
+
+        :param section: The temporary category to add
+        :type section: :class:`importer.TempCategory`
+        """
         name = str(section)
         dic = section.dic
         children = section.children
@@ -1777,13 +1957,27 @@ class VMF:
             self.cordons = Cordons(dic, children)
 
     def mark_vertex(self, vertex: Vertex, size=32, dev=1, visgroup=None):
+        """
+        Quickly adds a solid cube at the given vertex, useful for debugging
+
+        :param vertex: The position on which the cube is centered on
+        :type vertex: :class:`Vertex`
+        :param size: The size of the cube
+        :type size: :obj:`int`
+        :param dev: The texture given to the cube, see :func:`~SolidGenerator.dev_material`
+        :type dev: :obj:`int`
+        :param visgroup: Optionally adding the cube to an existing visgroup
+        :type visgroup: :obj:`None` or :obj:`str`
+        """
         s = SolidGenerator.cube(vertex, size, size, size, True, dev)
         if visgroup is not None:
-            print(visgroup)
             self.add_to_visgroup(visgroup, s)
         self.add_solids(s)
 
     def blank_vmf(self):
+        """
+        Generates necessary categories, use :func:`~new_vmf` to also generate the VMF itself
+        """
         self.versioninfo = VersionInfo()
         self.visgroups = VisGroups()
         self.viewsettings = ViewSettings()
@@ -1792,6 +1986,12 @@ class VMF:
         self.cordons = Cordons()
 
     def export(self, filename):
+        """
+        Exports the VMF to a .VMF file
+
+        :param filename: Exported file name, use a different filename or it will overwrite the existing file
+        :type filename: :obj:`str`
+        """
         self.__indent = 1  # Represents the indent of the data and not the categories (which use indent-1)
 
         start_time = time.time()  # To get how long the export took
@@ -1869,6 +2069,17 @@ class VMF:
 
 
 def load_vmf(name, merge_vertices=0.0001):
+    """
+    Loads a .VMF file
+
+    :param name: The OS file to open, path needs to be included
+    :type name: :obj:`str`
+    :param merge_vertices: Vertices on a solid within this distance are merged into a single vertex class, set to 0
+    for no merging
+    :type merge_vertices: :obj:`int` or :obj:`float`
+    :return: A loaded VMF
+    :rtype: :class:`VMF`
+    """
     if VMF.info_in_console:
         print("Loading VMF")
 
@@ -1888,6 +2099,12 @@ def load_vmf(name, merge_vertices=0.0001):
 
 
 def new_vmf():
+    """
+    Generates a VMF with the necessary classes
+
+    :return: A blank VMF
+    :rtype: :class:`VMF`
+    """
     v = VMF()
     v.blank_vmf()
     return v

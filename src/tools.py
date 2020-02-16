@@ -1,6 +1,14 @@
 
 
-def num(s):  # Tries to turn string into int, then float, if all fails returns string
+def num(s: str):
+    """
+    Tries to turn string into int or float
+
+    :param s: The string to parse
+    :type s: :obj:`str`
+    :return: If unable to convert returns the input
+    :rtype: :obj:`int` or :obj:`float` or :obj:`str`
+    """
     try:
         return int(s)
     except ValueError:
