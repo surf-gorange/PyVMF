@@ -9,6 +9,14 @@ Welcome to PyVMF's documentation!
 .. toctree::
    :maxdepth: 5
    :caption: Contents:
+   
+   source/PyVMF
+   source/tools
+   source/importer
+   source/obj
+   source/triangulate_displacement
+   source/modules
+   
 
 
 

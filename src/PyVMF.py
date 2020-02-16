@@ -2074,8 +2074,7 @@ def load_vmf(name, merge_vertices=0.0001):
 
     :param name: The OS file to open, path needs to be included
     :type name: :obj:`str`
-    :param merge_vertices: Vertices on a solid within this distance are merged into a single vertex class, set to 0
-    for no merging
+    :param merge_vertices: Vertices on a solid within this distance are merged into a single vertex class, set to 0 for no merging
     :type merge_vertices: :obj:`int` or :obj:`float`
     :return: A loaded VMF
     :rtype: :class:`VMF`

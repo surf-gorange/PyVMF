@@ -1,4 +1,4 @@
-obj module
+Obj
 ==========
 
 .. automodule:: obj

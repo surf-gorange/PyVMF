@@ -1,4 +1,4 @@
-triangulate\_displacement module
+Triangulate Displacement
 ================================
 
 .. automodule:: triangulate_displacement

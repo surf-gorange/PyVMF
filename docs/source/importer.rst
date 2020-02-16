@@ -1,4 +1,4 @@
-importer module
+Importer
 ===============
 
 .. automodule:: importer
