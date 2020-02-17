@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "8456"
-	"mapversion" "5"
+	"mapversion" "7"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "5"
+	"mapversion" "7"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -28,7 +28,7 @@ world
 	"skyname" "sky_dust"
 	solid
 	{
-		"id" "353"
+		"id" "372"
 		side
 		{
 			"id" "18"
@@ -97,7 +97,7 @@ world
 		}
 		editor
 		{
-			"color" "0 238 195"
+			"color" "0 144 133"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 			"cordonsolid" "1"
@@ -105,7 +105,7 @@ world
 	}
 	solid
 	{
-		"id" "355"
+		"id" "374"
 		side
 		{
 			"id" "48"
@@ -174,7 +174,7 @@ world
 		}
 		editor
 		{
-			"color" "0 238 195"
+			"color" "0 144 133"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 			"cordonsolid" "1"
@@ -182,7 +182,7 @@ world
 	}
 	solid
 	{
-		"id" "357"
+		"id" "376"
 		side
 		{
 			"id" "42"
@@ -251,7 +251,7 @@ world
 		}
 		editor
 		{
-			"color" "0 238 195"
+			"color" "0 144 133"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 			"cordonsolid" "1"
@@ -259,7 +259,7 @@ world
 	}
 	solid
 	{
-		"id" "359"
+		"id" "378"
 		side
 		{
 			"id" "36"
@@ -328,7 +328,7 @@ world
 		}
 		editor
 		{
-			"color" "0 238 195"
+			"color" "0 144 133"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 			"cordonsolid" "1"
@@ -336,7 +336,7 @@ world
 	}
 	solid
 	{
-		"id" "361"
+		"id" "380"
 		side
 		{
 			"id" "30"
@@ -405,7 +405,7 @@ world
 		}
 		editor
 		{
-			"color" "0 238 195"
+			"color" "0 144 133"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 			"cordonsolid" "1"
@@ -413,7 +413,7 @@ world
 	}
 	solid
 	{
-		"id" "363"
+		"id" "382"
 		side
 		{
 			"id" "24"
@@ -482,7 +482,7 @@ world
 		}
 		editor
 		{
-			"color" "0 238 195"
+			"color" "0 144 133"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 			"cordonsolid" "1"
@@ -643,6 +643,31 @@ world
 }
 entity
 {
+	"id" "349"
+	"classname" "light"
+	"_constant_attn" "0"
+	"_distance" "0"
+	"_fifty_percent_distance" "0"
+	"_hardfalloff" "0"
+	"_light" "255 255 255"
+	"_lightHDR" "-1 -1 -1 1"
+	"_lightscaleHDR" "1"
+	"_linear_attn" "0"
+	"_quadratic_attn" "1"
+	"_zero_percent_distance" "0"
+	"spawnflags" "0"
+	"style" "0"
+	"origin" "305.665 -332.453 513"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
 	"id" "3"
 	"classname" "info_player_terrorist"
 	"angles" "0 0 0"
@@ -728,8 +753,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[1058.88 -779.215 944.011]"
-		"look" "[1058.2 -778.577 943.649]"
+		"position" "[650.752 -523.28 742.838]"
+		"look" "[650.046 -522.886 742.25]"
 	}
 }
 cordons

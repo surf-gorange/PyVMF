@@ -69,6 +69,10 @@ class Common:
         temp = string.split()
         return Color(int(temp[0]), int(temp[1]), int(temp[2]))
 
+    def _string_to_color_light(self, string: str) -> ColorLight:
+        temp = string.split()
+        return ColorLight(int(temp[0]), int(temp[1]), int(temp[2]), int(temp[3]))
+
     def _string_to_uvaxis(self, string: str) -> UVaxis:
         reg = re.sub(r'[\[\]]', '', string).split()
         return UVaxis(*reg)
@@ -98,7 +102,7 @@ class Color:
     :type b: :obj:`int`
     """
 
-    def __init__(self, r: int, g: int, b: int):
+    def __init__(self, r: int = 255, g: int = 255, b: int = 255):
         self.r = 0
         self.g = 0
         self.b = 0
@@ -133,6 +137,37 @@ class Color:
 
     def export(self) -> Tuple[int, int, int]:
         return self.r, self.g, self.b
+
+
+class ColorLight(Color):
+    """
+    Simple RGB color class with brightness (used for lights)
+
+    :param r: Value for RED between 0 and 255
+    :type r: :obj:`int`
+    :param g: Value for GREEN between 0 and 255
+    :type g: :obj:`int`
+    :param b: Value for BLUE between 0 and 255
+    :type b: :obj:`int`
+    :param brightness: Value for brightness, above 0
+    :type brightness: :obj:`int`
+    """
+    def __init__(self, r: int = 255, g: int = 255, b: int = 255, brightness: int = 200):
+        super(ColorLight, self).__init__(r, g, b)
+        self.brightness = brightness
+
+    def __str__(self):
+        return f"{self.r} {self.g} {self.b} {self.brightness}"
+
+    def set_brightness(self, brightness: int):
+        """
+        :param brightness: New brightness value
+        :type brightness: :obj:`int`
+        """
+        self.brightness = brightness
+
+    def export(self) -> Tuple[int, int, int, int]:
+        return self.r, self.g, self.b, self.brightness
 
 
 class VersionInfo(Common):
@@ -371,8 +406,8 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
         :type angle: :obj:`int` or :obj:`float`
         """
         a = math.radians(angle)
-        new_x = center.x + (self.x - center.x)*math.cos(a) - (self.y - center.y)*math.sin(a)
-        new_y = center.y + (self.x - center.x)*math.sin(a) + (self.y - center.y)*math.cos(a)
+        new_x = center.x + (self.x - center.x) * math.cos(a) - (self.y - center.y) * math.sin(a)
+        new_y = center.y + (self.x - center.x) * math.sin(a) + (self.y - center.y) * math.cos(a)
         self.set(new_x, new_y, self.z)
 
     def rotate_y(self, center: Vertex, angle):
@@ -559,7 +594,7 @@ class Solid(Common):
         z -= 1
         for vertex in self.get_all_vertices():
             diff = vertex.diff(center)
-            fixed_diff = (diff.x*x, diff.y*y, diff.z*z)
+            fixed_diff = (diff.x * x, diff.y * y, diff.z * z)
             vertex.move(*fixed_diff)
 
     @property
@@ -604,7 +639,7 @@ class Solid(Common):
         y = self.get_axis_extremity(y=False).y
         z = self.get_axis_extremity(z=False).z
 
-        size = self.get_size()
+        size = self.size
         size.divide(2)
 
         v.set(x, y, z)
@@ -630,15 +665,15 @@ class Solid(Common):
 
         if x is not None:
             lx = sorted(verts, key=operator.attrgetter("x"))
-            return lx[int(not x)-1]
+            return lx[int(not x) - 1]
 
         elif y is not None:
             ly = sorted(verts, key=operator.attrgetter("y"))
-            return ly[int(not y)-1]
+            return ly[int(not y) - 1]
 
         elif z is not None:
             lz = sorted(verts, key=operator.attrgetter("z"))
-            return lz[int(not z)-1]
+            return lz[int(not z) - 1]
 
         raise ValueError("No axis given")
 
@@ -705,7 +740,8 @@ class Solid(Common):
         """
         return self.side
 
-    def get_size(self) -> Vertex:
+    @property
+    def size(self) -> Vertex:
         """
         :return: The total size of the bounding rectangle around the solid
         :rtype: :class:`Vertex`
@@ -831,17 +867,17 @@ class Solid(Common):
 
         s = self.copy()
 
-        half_size = s.get_size()
+        half_size = s.size
         half_size.divide(2)
 
-        ratio = (1/x, 1/y, 1/z)
+        ratio = (1 / x, 1 / y, 1 / z)
 
         s.scale(s.center, *ratio)
 
-        move_amount = s.get_size()
+        move_amount = s.size
 
         s.move(-half_size.x, half_size.y, half_size.z)
-        s.move(move_amount.x/2, -move_amount.y/2, -move_amount.z/2)
+        s.move(move_amount.x / 2, -move_amount.y / 2, -move_amount.z / 2)
 
         for iz in range(z):
             for iy in range(y):
@@ -852,11 +888,58 @@ class Solid(Common):
 
         return li
 
-    def window(self) -> List[Solid, ...]:
+    def window(self, direction: Vertex = None) -> List[Solid, Solid, Solid, Solid]:
         """
-        To be implemented
+        Creates a hole in the wall, only works on 90 degree blocks
+
+        :param direction: If set defines the direction the hole will be made, requires exactly 2 non-zero values
+        :type direction: :class:`Vertex`
+        :return: The 4 blocks surrounding the hole
+        :rtype: :obj:`list` of :class:`Solid`
         """
-        return []
+        dim = [0, 0, 0]
+        div_amount = 3
+        smallest_pos = 0
+
+        if direction is None:
+            size = self.size.export()
+            smallest = min(size)
+
+            cube_check = False
+            for i, pos in enumerate(size):
+                if pos == smallest and not cube_check:
+                    dim[i] = 1
+                    smallest_pos = i
+                    cube_check = True
+                else:
+                    dim[i] = div_amount
+
+        else:
+            error = 0
+            for i, pos in enumerate(direction.export()):
+                if pos != 0:
+                    dim[i] = div_amount
+                    smallest_pos = i
+                    error += 1
+                else:
+                    dim[i] = 1
+
+            if error != 2:
+                raise ValueError("Only 2 directions are accepted, please read the docs")
+
+        sub = self.naive_subdivide(*dim)
+        req = [sub[1], sub[3], sub[5], sub[7]]
+        s1 = req[0]
+        s2 = req[-1]
+
+        if smallest_pos == 0:
+            s1.scale(s1.center, 1, div_amount)
+            s2.scale(s2.center, 1, div_amount)
+        else:
+            s1.scale(s1.center, div_amount)
+            s2.scale(s2.center, div_amount)
+
+        return req
 
     def is_simple_solid(self) -> bool:
         """
@@ -1113,6 +1196,8 @@ class DispInfo(Common):
         dic, children = self._dic_and_children(dic, children)
 
         self.power = dic.pop("power", 3)
+        """The displacement power, can only be 2, 3 or 4"""
+
         startposition = dic.pop("startposition", "[0 0 0]")
         self.startposition = self._string_to_vertex(startposition)
         self.startposition.normal = False
@@ -1124,10 +1209,10 @@ class DispInfo(Common):
         self.matrix_size_fix = 0
 
         if self.power == 2 or self.power == 4:
-            self.matrix_size_fix = self.power**2
+            self.matrix_size_fix = self.power ** 2
             self.size = self.matrix_size_fix + 1
         else:
-            self.size = self.power**2
+            self.size = self.power ** 2
             self.matrix_size_fix = self.size - 1
 
         self.matrix = Matrix(self.size)
@@ -1160,7 +1245,7 @@ class DispInfo(Common):
                 self._allowed_verts = AllowedVerts(self.matrix, child.dic)
 
     def export_children(self):
-        return self._normals, self._distances, self._offsets, self._offset_normals, self._alphas,\
+        return self._normals, self._distances, self._offsets, self._offset_normals, self._alphas, \
                self._triangle_tags, self._allowed_verts
 
 
@@ -1331,11 +1416,11 @@ class Normals(Common):
         i = 0
         for x, y, t in self.matrix.extract_dic(dic, a_var):
             if i == 0:
-                self.matrix.get(x//a_var, y).normal.x = num(t[x])
+                self.matrix.get(x // a_var, y).normal.x = num(t[x])
             elif i == 1:
-                self.matrix.get(x//a_var, y).normal.y = num(t[x])
+                self.matrix.get(x // a_var, y).normal.y = num(t[x])
             else:
-                self.matrix.get(x//a_var, y).normal.z = num(t[x])
+                self.matrix.get(x // a_var, y).normal.z = num(t[x])
                 i = -1
             i += 1
 
@@ -1509,9 +1594,9 @@ class Vector(Common):
         return t.x + t.y + t.z
 
     def cross(self, other):
-        return Vector((self.y*other.z - self.z*other.y),
-                      (self.z*other.x - self.x*other.z),
-                      (self.x*other.y - self.y*other.x))
+        return Vector((self.y * other.z - self.z * other.y),
+                      (self.z * other.x - self.x * other.z),
+                      (self.x * other.y - self.y * other.x))
 
     def normalize(self):
         m = self.mag()
@@ -1533,7 +1618,7 @@ class Vector(Common):
 
     @classmethod
     def vector_from_2_vertices(cls, v1: Vertex, v2: Vertex):
-        return Vector(*(v2-v1).export())
+        return Vector(*(v2 - v1).export())
 
 
 class Hidden(Common):
@@ -1587,6 +1672,32 @@ class Entity(Common):
 
     def export_children(self):
         return (*self.connections, *self.solid, self.editor)
+
+
+class Light(Entity):
+    SUBNAME = "light"
+
+    def __init__(self, dic: dict = None, children: list = None):
+        super(Light, self).__init__(dic, children)
+
+        self._constant_attn = self.other.pop("_constant_attn", 0)
+        self._distance = self.other.pop("_distance", 0)
+        self._fifty_percent_distance = self.other.pop("_fifty_percent_distance", 0)
+        self._hardfalloff = self.other.pop("_hardfalloff", 0)
+        _light = self.other.pop("_light", "255 255 255 200")
+        self._light = self._string_to_color_light(_light)
+        self._lightHDR = self.other.pop("_lightHDR", "[-1 -1 -1 1]")
+        self._lightscaleHDR = self.other.pop("_lightscaleHDR", 1)
+        self._linear_attn = self.other.pop("_linear_attn", 0)
+        self._quadratic_attn = self.other.pop("_quadratic_attn", 1)
+        self._zero_percent_distance = self.other.pop("_zero_percent_distance", 0)
+        self.spawnflags = self.other.pop("spawnflags", 0)
+        self.style = self.other.pop("style", 0)
+        self.origin = self.other.pop("origin", Vertex(0, 0, 0))
+
+        self.export_list = ["id", "classname", "_constant_attn", "_distance", "_fifty_percent_distance",
+                            "_hardfalloff", "_light", "_lightHDR", "_lightscaleHDR", "_linear_attn", "_quadratic_attn",
+                            "_quadratic_attn", "_zero_percent_distance", "spawnflags", "style", "origin"]
 
 
 class Connections(Common):
@@ -1783,6 +1894,59 @@ class SolidGenerator:
 
         return solid
 
+    @staticmethod
+    def room(vertex: Vertex, w, h, l, thick: int = 64, dev=0) -> List[Solid, Solid, Solid, Solid, Solid, Solid]:
+        """
+        Generates a sealed cubed room
+
+        :param vertex: Center position of the room
+        :type vertex: :class:`Vertex`
+        :param w: Width of the room
+        :type w: :obj:`int`
+        :param h: Height of the room
+        :type h: :obj:`int`
+        :param l: Length of the room
+        :type l: :obj:`int`
+        :param thick: The thickness of the walls
+        :type thick: :obj:`int`
+        :param dev: If set, changes the room texture, see :func:`~SolidGenerator.dev_material`
+        :type dev: :obj:`int`
+        :return: A generated room
+        :rtype: :obj:`list` of :class:`Solid`
+        """
+        s = []
+
+        ww = w / 2
+        hh = h / 2
+        ll = l / 2
+        tt = thick / 2
+
+        v = vertex.copy()
+        v.move(-ww - tt, 0, 0)
+        s.append(SolidGenerator.cube(v, thick, h, l, True, dev))
+
+        v = vertex.copy()
+        v.move(ww + tt, 0, 0)
+        s.append(SolidGenerator.cube(v, thick, h, l, True, dev))
+
+        v = vertex.copy()
+        v.move(0, -hh - tt, 0)
+        s.append(SolidGenerator.cube(v, w, thick, l, True, dev))
+
+        v = vertex.copy()
+        v.move(0, hh + tt, 0)
+        s.append(SolidGenerator.cube(v, w, thick, l, True, dev))
+
+        v = vertex.copy()
+        v.move(0, 0, -ll - tt)
+        s.append(SolidGenerator.cube(v, w, h, thick, True, dev))
+
+        v = vertex.copy()
+        v.move(0, 0, ll + tt)
+        s.append(SolidGenerator.cube(v, w, h, thick, True, dev))
+
+        return s
+
 
 class EntityGenerator:
     """
@@ -1790,8 +1954,26 @@ class EntityGenerator:
     """
 
     @staticmethod
-    def light():
-        pass
+    def light(origin: Vertex, color: Color, brightness: int = 200) -> Light:
+        """
+        Generates a basic light
+
+        :param origin: The position of the light in the world
+        :type origin: :class:`Vertex`
+        :param color: The color of the light
+        :type color: :class:`Color`
+        :param brightness: The brightness of the light
+        :type brightness: :obj:`int`
+        :return: A generated light
+        :rtype: :class:`Light`
+        """
+        l = Light({"classname": Light.SUBNAME})
+        l.origin = origin
+        l._light = ColorLight(*color.export(), brightness)
+
+        l.editor = Editor()
+
+        return l
 
 
 class VMF:
@@ -1995,7 +2177,11 @@ class VMF:
             self.world = World(dic, children)
 
         elif name == Entity.NAME:
-            self.entity.append(Entity(dic, children))
+            if dic["classname"] == Light.SUBNAME:
+                e = Light(dic, children)
+            else:
+                e = Entity(dic, children)
+            self.entity.append(e)
 
         elif name == Hidden.NAME:
             self.hidden.append(Hidden(dic, children))
@@ -2064,7 +2250,7 @@ class VMF:
                 self._nest_export(item)
 
         if VMF.info_in_console:
-            print(f"Done in {round(time.time()-start_time, 3)} seconds")
+            print(f"Done in {round(time.time() - start_time, 3)} seconds")
 
     def _nest_export(self, category):
         if VMF.info_in_console:
@@ -2082,7 +2268,7 @@ class VMF:
                 self.__indent -= 1
 
             # When there aren't any more children we close the curly brackets
-            self.file.write("\t" * (self.__indent-1) + "}\n")
+            self.file.write("\t" * (self.__indent - 1) + "}\n")
 
     def _get_export_size(self, category):  # Same concept as _nest_export just without writing to file
         if category is not None:
@@ -2103,7 +2289,7 @@ class VMF:
     def _format_converter(self, name, info_list):
         # The category name is always one less indent from the data/children, and since self.indent keeps track of the
         # data indent and not the category indent (doesn't matter which one you track as long as it's always the same)
-        t = "\t"*(self.__indent-1)
+        t = "\t" * (self.__indent - 1)
         self.file.write(f"{t}{name}\n{t}{{\n")
         t += "\t"
 
