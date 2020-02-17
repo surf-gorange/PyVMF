@@ -12,6 +12,8 @@ PyVMF
    VMF
    SolidGenerator
    Solid
+   EntityGenerator
+   Entity
    Side
    Vertex
    DispInfo

@@ -852,8 +852,10 @@ class Solid(Common):
 
         return li
 
-    def window(self) -> List[Solid]:
-
+    def window(self) -> List[Solid, ...]:
+        """
+        To be implemented
+        """
         return []
 
     def is_simple_solid(self) -> bool:
@@ -1780,6 +1782,16 @@ class SolidGenerator:
         SolidGenerator.dev_material(solid, dev)
 
         return solid
+
+
+class EntityGenerator:
+    """
+    Generates entities from scratch, remember you still need to add them to :class:`VMF` using :func:`~VMF.add_entities`
+    """
+
+    @staticmethod
+    def light():
+        pass
 
 
 class VMF:
