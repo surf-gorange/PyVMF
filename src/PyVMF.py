@@ -1,3 +1,4 @@
+from __future__ import annotations
 import re
 from copy import deepcopy
 import sys
@@ -7,6 +8,7 @@ import operator
 from random import randint
 from tools import *
 from importer import *
+from typing import List, Tuple, Generator
 
 
 class Common:
@@ -51,22 +53,23 @@ class Common:
         Common.ID += 1
         return Common.ID
 
-    def _string_to_vertex(self, string: str):
+    def _string_to_vertex(self, string: str) -> Vertex:
         reg = re.sub(r'[(){}<>\[\]]', '', string).split()
         return Vertex(num(reg[0]), num(reg[1]), num(reg[2]))
 
     def _string_to_3x_vertex(self, string: str):
+        # TODO: Clean this up
         reg = re.sub(r'[(){}<>]', '', string).split()
         clean = []
         for i in reg:
             clean.append(num(i))
         return clean
 
-    def _string_to_color(self, string: str):
+    def _string_to_color(self, string: str) -> Color:
         temp = string.split()
         return Color(int(temp[0]), int(temp[1]), int(temp[2]))
 
-    def _string_to_uvaxis(self, string: str):
+    def _string_to_uvaxis(self, string: str) -> UVaxis:
         reg = re.sub(r'[\[\]]', '', string).split()
         return UVaxis(*reg)
 
@@ -95,7 +98,7 @@ class Color:
     :type b: :obj:`int`
     """
 
-    def __init__(self, r, g, b):
+    def __init__(self, r: int, g: int, b: int):
         self.r = 0
         self.g = 0
         self.b = 0
@@ -104,7 +107,7 @@ class Color:
     def __str__(self):
         return f"{self.r} {self.g} {self.b}"
 
-    def set(self, r=-1, g=-1, b=-1):
+    def set(self, r: int = -1, g: int = -1, b: int = -1):
         """
         Sets the color
 
@@ -128,7 +131,7 @@ class Color:
         """
         self.set(randint(0, 255), randint(0, 255), randint(0, 255))
 
-    def export(self):
+    def export(self) -> Tuple[int, int, int]:
         return self.r, self.g, self.b
 
 
@@ -164,10 +167,10 @@ class VisGroups(Common):
     def new_visgroup(self, name: str):
         self.visgroup.append(VisGroup({"name": name}))
 
-    def get_visgroups(self):
+    def get_visgroups(self) -> List[VisGroup]:
         return self.visgroup
 
-    def export_children(self):
+    def export_children(self) -> Tuple[VisGroup, ...]:
         return (*self.visgroup,)
 
 
@@ -279,7 +282,7 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
     def __sub__(self, other):
         return Vertex(self.x - other.x, self.y - other.y, self.z - other.z)
 
-    def similar(self, other, accuracy=0.001):
+    def similar(self, other, accuracy=0.001) -> bool:
         """
         Compares the current vertex with the given one to see if they are similar
 
@@ -320,7 +323,7 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
         self.y /= y
         self.z /= z
 
-    def diff(self, other):
+    def diff(self, other) -> Vertex:
         """
         :param other: The vertex to differentiate with
         :return: The difference in distance between 2 vertices
@@ -358,7 +361,7 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
         self.y = y
         self.z = z
 
-    def rotate_z(self, center, angle):
+    def rotate_z(self, center: Vertex, angle):
         """
         Rotates the vertex around the z axis
 
@@ -372,7 +375,7 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
         new_y = center.y + (self.x - center.x)*math.sin(a) + (self.y - center.y)*math.cos(a)
         self.set(new_x, new_y, self.z)
 
-    def rotate_y(self, center, angle):
+    def rotate_y(self, center: Vertex, angle):
         """
         Rotates the vertex around the y axis
 
@@ -386,7 +389,7 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
         new_z = center.z + (self.x - center.x) * math.sin(a) + (self.z - center.z) * math.cos(a)
         self.set(new_x, self.y, new_z)
 
-    def rotate_x(self, center, angle):
+    def rotate_x(self, center: Vertex, angle):
         """
         Rotates the vertex around the x axis
 
@@ -416,7 +419,7 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
         self.y = int(self.y)
         self.z = int(self.z)
 
-    def export(self):
+    def export(self) -> Tuple[int, int, int]:
         return (self.x,
                 self.y,
                 self.z)
@@ -451,7 +454,7 @@ class Solid(Common):
             elif str(child) == Editor.NAME:
                 self.editor = Editor(child.dic)
 
-    def add_sides(self, *args):
+    def add_sides(self, *args: Side):
         """
         Adds sides to the solid, note that no checks are made for validity
 
@@ -475,7 +478,7 @@ class Solid(Common):
             for vert in side.plane:
                 vert.move(x, y, z)
 
-    def get_linked_vertices(self, vertex: Vertex, similar=0.0) -> list:
+    def get_linked_vertices(self, vertex: Vertex, similar=0.0) -> List[Vertex, ...]:
         """
         :param vertex: The vertex to check against
         :type vertex: :class:`Vertex`
@@ -497,7 +500,7 @@ class Solid(Common):
 
         return li
 
-    def rotate_x(self, center, angle):
+    def rotate_x(self, center: Vertex, angle):
         """
         Rotates the solid around the x axis
 
@@ -509,7 +512,7 @@ class Solid(Common):
         for side in self.side:
             side.rotate_x(center, angle)
 
-    def rotate_y(self, center, angle):
+    def rotate_y(self, center: Vertex, angle):
         """
         Rotates the solid around the y axis
 
@@ -521,7 +524,7 @@ class Solid(Common):
         for side in self.side:
             side.rotate_y(center, angle)
 
-    def rotate_z(self, center, angle):
+    def rotate_z(self, center: Vertex, angle):
         """
         Rotates the solid around the z axis
 
@@ -537,7 +540,7 @@ class Solid(Common):
         for vert in self.get_all_vertices():
             vert.flip(x, y, z)
 
-    def scale(self, center, x=1.0, y=1.0, z=1.0):
+    def scale(self, center: Vertex, x=1.0, y=1.0, z=1.0):
         """
         Scales the solid using ratios.
         For example using the center of the solid and values of 2 makes it twice as big
@@ -560,7 +563,7 @@ class Solid(Common):
             vertex.move(*fixed_diff)
 
     @property
-    def center(self):
+    def center(self) -> Vertex:
         """
         Finds the center of the solid based on the average of all vertices.
         **Can behave unpredictably** as faces only consists of 3 verticies so the center might be off by a tiny amount
@@ -577,7 +580,7 @@ class Solid(Common):
         return v
 
     @center.setter
-    def center(self, vertex):
+    def center(self, vertex: Vertex):
         """
         Moves the solid based on it's center to the new position
 
@@ -587,7 +590,7 @@ class Solid(Common):
         self.move(*vertex.diff(self.center).export())
 
     @property
-    def center_geo(self):
+    def center_geo(self) -> Vertex:
         """
         Finds the center of the solid based on the extremities of all 3 axes.
         More reliable than :func:`~Solid.center`
@@ -639,7 +642,7 @@ class Solid(Common):
 
         raise ValueError("No axis given")
 
-    def get_3d_extremity(self, x: bool = None, y: bool = None, z: bool = None):
+    def get_3d_extremity(self, x: bool = None, y: bool = None, z: bool = None) -> Tuple[Vertex, List[Vertex, ...]]:
         """
         Finds the vertices that are the furthest on the given axes, as well as ties
 
@@ -682,7 +685,7 @@ class Solid(Common):
 
         return best, ties
 
-    def get_all_vertices(self):
+    def get_all_vertices(self) -> List[Vertex, ...]:
         """
         Finds all vertices on the solid, including overlapping ones from the different sides, for only unique vertices
         use :func:`~Solid.get_only_unique_vertices`
@@ -695,7 +698,7 @@ class Solid(Common):
             vertex_list.extend(side.plane)
         return vertex_list
 
-    def get_sides(self):
+    def get_sides(self) -> List[Side, ...]:
         """
         :return: All the sides on the solid
         :rtype: :obj:`list` of :class:`Side`
@@ -704,7 +707,7 @@ class Solid(Common):
 
     def get_size(self) -> Vertex:
         """
-        :return: the total size of the bounding rectangle around the solid
+        :return: The total size of the bounding rectangle around the solid
         :rtype: :class:`Vertex`
         """
         x = []
@@ -717,23 +720,34 @@ class Solid(Common):
 
         return Vertex(max(x) - min(x), max(y) - min(y), max(z) - min(z))
 
-    def get_displacement_sides(self, matrix_instead_of_side=False) -> list:
+    def get_displacement_sides(self) -> List[Side, ...]:
         """
-        :param matrix_instead_of_side: Provides directly the :class:`Matrix` instead of :class:`DispInfo`
-        :type matrix_instead_of_side: :obj:`bool`
-        :return: the sides with displacements on them
-        :rtype: :obj:`list` of :class:`DispInfo` or :obj:`list` of :class:`Matrix`
+        Gets the sides that have displacements, use :func:`~Solid.get_displacement_matrix_sides` to get the matrices
+        directly instead
+
+        :return: The sides with displacements on them
+        :rtype: :obj:`list` of :class:`Side`
         """
         li = []
         for side in self.side:
             if side.dispinfo is not None:
-                if matrix_instead_of_side:
-                    li.append(side.dispinfo.matrix)
-                else:
-                    li.append(side)
+                li.append(side)
         return li
 
-    def get_texture_sides(self, name: str, exact=False) -> list:
+    def get_displacement_matrix_sides(self) -> List[Matrix, ...]:
+        """
+        Gets the matrices from all the sides that have displacements, use :func:`~Solid.get_displacement_sides` to get
+        the sides instead
+
+        :return: The matrices from the sides with displacements on them
+        :type: :obj:`list` of :class:`Matrix`
+        """
+        li = []
+        for side in self.get_displacement_sides():
+            li.append(side.dispinfo.matrix)
+        return li
+
+    def get_texture_sides(self, name: str, exact=False) -> List[Side, ...]:
         """
         :param name: The name of the texture including path (ex: tools/toolsnodraw)
         :type name: :obj:`string`
@@ -752,7 +766,7 @@ class Solid(Common):
                     li.append(side)
         return li
 
-    def get_only_unique_vertices(self):
+    def get_only_unique_vertices(self) -> List[Vertex, ...]:
         """
         Finds all unique vertices on the solid, **you should not use this for vertex manipulation as changing one
         doesn't change all of them**. See :func:`~Solid.get_all_vertices`
@@ -799,7 +813,7 @@ class Solid(Common):
             if side.material == old_material:
                 side.material = new_material
 
-    def naive_subdivide(self, x=1, y=1, z=1) -> list:
+    def naive_subdivide(self, x=1, y=1, z=1) -> List[Solid, ...]:
         """
         Naively subdivides a copy of the solid, works best for rectangular shapes. It's naive because it scales down
         the solid then creates an array from that
@@ -838,6 +852,10 @@ class Solid(Common):
 
         return li
 
+    def window(self) -> List[Solid]:
+
+        return []
+
     def is_simple_solid(self) -> bool:
         """
         :return: A solid is considered simple if it has 6 or less sides
@@ -861,7 +879,7 @@ class Solid(Common):
                     else:
                         vertex_list.append(vertex)
 
-    def set_texture(self, new_material):
+    def set_texture(self, new_material: str):
         """
         Sets the given texture on all sides
 
@@ -1002,7 +1020,7 @@ class Side(Common):
         for vertex in self.plane:
             vertex.move(x, y, z)
 
-    def rotate_x(self, center, angle):
+    def rotate_x(self, center: Vertex, angle):
         """
         Rotates the side around the x axis
 
@@ -1014,7 +1032,7 @@ class Side(Common):
         for vert in self.plane:
             vert.rotate_x(center, angle)
 
-    def rotate_y(self, center, angle):
+    def rotate_y(self, center: Vertex, angle):
         """
         Rotates the vertex around the y axis
 
@@ -1026,7 +1044,7 @@ class Side(Common):
         for vert in self.plane:
             vert.rotate_y(center, angle)
 
-    def rotate_z(self, center, angle):
+    def rotate_z(self, center: Vertex, angle):
         """
         Rotates the vertex around the z axis
 
@@ -1043,14 +1061,14 @@ class Side(Common):
         for vert in self.plane:
             vert.flip(x, y, z)
 
-    def get_vertices(self):
+    def get_vertices(self) -> List[Vertex, Vertex, Vertex]:
         """
         :return: All 3 vertices that define the plane
-        :rtype: :obj:`list`
+        :rtype: :obj:`list` of :class:`Vertex`
         """
         return self.plane
 
-    def get_displacement(self):
+    def get_displacement(self) -> DispInfo:
         """
         :return: The current displacement, only 1 per side
         :rtype: :class:`DispInfo` or :obj:`None`
@@ -1145,6 +1163,10 @@ class DispInfo(Common):
 
 
 class DispVert(Common):
+    """
+    Keeps track of each individual displacement vertex
+    """
+
     def __init__(self):
         self.normal = Vertex(0, 0, 0)
         self.distance = 0
@@ -1156,11 +1178,25 @@ class DispVert(Common):
     def __str__(self):
         return f"{self.normal} {self.distance}"
 
-    def set(self, normal, distance):
-        self.normal.set(*normal)
+    def set(self, normal: Vertex, distance: int):
+        """
+        Sets the normal direction and distance
+
+        :param normal: The normal direction (x, y and z)
+        :type normal: :class:`Vertex`
+        :param distance: How far to go in the normal direction
+        :type distance: :obj:`int`
+        """
+        self.normal.set(*normal.export())
         self.distance = distance
 
-    def set_alpha(self, amount):
+    def set_alpha(self, amount: int):
+        """
+        Sets the alpha, used by blend textures, 0 is the first texture, 255 is the second texture, 127 is both
+
+        :param amount: The alpha amount, between 0 and 255
+        :type amount: :obj:`int`
+        """
         if amount < 0 or amount > 255:
             raise ValueError(f"Error: {amount} not in range [0, 255]")
         else:
@@ -1191,7 +1227,7 @@ class Matrix(Common):
     def __str__(self):
         return str(self.matrix)
 
-    def get(self, x, y):
+    def get(self, x: int, y: int) -> DispVert:
         """
         :param x: Position x in the matrix
         :type x: :obj:`int`
@@ -1202,7 +1238,7 @@ class Matrix(Common):
         """
         return self.matrix[x][y]
 
-    def row(self, y):
+    def row(self, y: int) -> List[DispVert, ...]:
         """
         :param y: The row to get
         :type y: :obj:`int`
@@ -1214,7 +1250,7 @@ class Matrix(Common):
             li.append(self.matrix[x][y])
         return li
 
-    def column(self, x):
+    def column(self, x: int) -> List[DispVert, ...]:
         """
         :param x: The column to get
         :type x: :obj:`int`
@@ -1223,14 +1259,14 @@ class Matrix(Common):
         """
         return self.matrix[x]
 
-    def rect(self, x, y, w, h):
+    def rect(self, x: int, y: int, w: int, h: int) -> Generator[DispVert, ...]:
         """
         :param x: Position x in the matrix
         :param y: Position y in the matrix
         :param w: Width of the rectangle
         :param h: Height of the rectangle
         :return: Yields all the disp verts inside the given rectangle
-        :rtype: :obj:`iterator` of :class:`DispVert`
+        :rtype: :obj:`generator` of :class:`DispVert`
         """
         for y2 in range(y, y + h):
             for x2 in range(x, x + w):
@@ -1638,8 +1674,10 @@ class Box(Common):
     def __init__(self, dic: dict = None):
         dic = self._dic(dic)
 
-        self.mins = dic.pop("mins", "(0 0 0)")
-        self.maxs = dic.pop("maxs", "(0 0 0)")
+        mins = dic.pop("mins", "(0 0 0)")
+        self.mins = self._string_to_vertex(mins)
+        maxs = dic.pop("maxs", "(0 0 0)")
+        self.maxs = self._string_to_vertex(maxs)
 
         self.other = dic
         self.export_list = ["mins", "maxs"]
@@ -1672,7 +1710,7 @@ class SolidGenerator:
             solid.set_texture("tools/toolsblack")
 
     @staticmethod
-    def cube(vertex: Vertex, w, h, l, center=False, dev=0):
+    def cube(vertex: Vertex, w, h, l, center=False, dev=0) -> Solid:
         """
         Generates a solid cube
 
@@ -1711,7 +1749,7 @@ class SolidGenerator:
         return solid
 
     @staticmethod
-    def displacement_triangle(vertex: Vertex, w, h, l, dev=0):
+    def displacement_triangle(vertex: Vertex, w, h, l, dev=0) -> Solid:
         """
         Generates a displacement triangle (L shaped viewed from above)
 
@@ -1771,7 +1809,7 @@ class VMF:
         # OTHER VARIABLES
         self.file = None
 
-    def get_solids(self, include_hidden=False, include_solid_entities=True):
+    def get_solids(self, include_hidden=False, include_solid_entities=True) -> List[Solid]:
         """
         Gets all the solids
 
@@ -1801,7 +1839,7 @@ class VMF:
 
         return li
 
-    def get_entities(self, include_hidden=False, include_solid_entities=False):
+    def get_entities(self, include_hidden=False, include_solid_entities=False) -> List[Entity]:
         """
         Gets all the entities
 
@@ -1956,7 +1994,7 @@ class VMF:
         elif name == Cordons.NAME:
             self.cordons = Cordons(dic, children)
 
-    def mark_vertex(self, vertex: Vertex, size=32, dev=1, visgroup=None):
+    def mark_vertex(self, vertex: Vertex, size: int = 32, dev: int = 1, visgroup: str = None):
         """
         Quickly adds a solid cube at the given vertex, useful for debugging
 
@@ -1976,7 +2014,7 @@ class VMF:
 
     def blank_vmf(self):
         """
-        Generates necessary categories, use :func:`~new_vmf` to also generate the VMF itself
+        Generates necessary categories (overwriting existing), use :func:`~new_vmf` to generate the VMF itself
         """
         self.versioninfo = VersionInfo()
         self.visgroups = VisGroups()
@@ -1985,7 +2023,7 @@ class VMF:
         self.cameras = Cameras()
         self.cordons = Cordons()
 
-    def export(self, filename):
+    def export(self, filename: str):
         """
         Exports the VMF to a .VMF file
 
@@ -2068,7 +2106,7 @@ class VMF:
                 self.file.write(f"{t}\"{item[0]}\" \"{str(item[1])}\"\n")
 
 
-def load_vmf(name, merge_vertices=0.0001):
+def load_vmf(name: str, merge_vertices=0.0001) -> VMF:
     """
     Loads a .VMF file
 
@@ -2097,7 +2135,7 @@ def load_vmf(name, merge_vertices=0.0001):
     return v
 
 
-def new_vmf():
+def new_vmf() -> VMF:
     """
     Generates a VMF with the necessary classes
 

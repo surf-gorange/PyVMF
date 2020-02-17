@@ -15,4 +15,5 @@ PyVMF
    Side
    Vertex
    DispInfo
+   DispVert
    Matrix
