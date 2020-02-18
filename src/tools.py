@@ -9,6 +9,7 @@ def num(s: str):
     :return: If unable to convert returns the input
     :rtype: :obj:`int` or :obj:`float` or :obj:`str`
     """
+    s = str(s)
     try:
         return int(s)
     except ValueError:
@@ -16,3 +17,5 @@ def num(s: str):
             return float(s)
         except ValueError:
             return str(s)
+
+

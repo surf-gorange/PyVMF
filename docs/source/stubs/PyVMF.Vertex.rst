@@ -24,6 +24,7 @@ PyVMF.Vertex
       ~Vertex.flip
       ~Vertex.ids
       ~Vertex.move
+      ~Vertex.multiply
       ~Vertex.rotate_x
       ~Vertex.rotate_y
       ~Vertex.rotate_z

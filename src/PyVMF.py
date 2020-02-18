@@ -6,9 +6,45 @@ import time
 import math
 import operator
 from random import randint
-from tools import *
+from tools import num
 from importer import *
 from typing import List, Tuple, Generator
+
+
+class Convert:
+    """
+    Converts strings to usable instances
+    """
+    @staticmethod
+    def string_to_vertex(string: str) -> Vertex:
+        reg = re.sub(r'[(){}<>\[\],]', '', string).split()
+        return Vertex(num(reg[0]), num(reg[1]), num(reg[2]))
+
+    @staticmethod
+    def string_to_3x_vertex(string: str) -> List[Vertex, Vertex, Vertex]:
+        reg = re.sub(r'[(){}<>]', '', string).split()
+        clean = []
+        for i in reg:
+            clean.append(num(i))
+
+        return [Vertex(clean[0], clean[1], clean[2]),
+                Vertex(clean[3], clean[4], clean[5]),
+                Vertex(clean[6], clean[7], clean[8])]
+
+    @staticmethod
+    def string_to_color(string: str) -> Color:
+        temp = string.split()
+        return Color(int(temp[0]), int(temp[1]), int(temp[2]))
+
+    @staticmethod
+    def string_to_color_light(string: str) -> ColorLight:
+        temp = string.split()
+        return ColorLight(int(temp[0]), int(temp[1]), int(temp[2]), int(temp[3]))
+
+    @staticmethod
+    def string_to_uvaxis(string: str) -> UVaxis:
+        reg = re.sub(r'[\[\]]', '', string).split()
+        return UVaxis(*reg)
 
 
 class Common:
@@ -52,30 +88,6 @@ class Common:
     def ids(self):
         Common.ID += 1
         return Common.ID
-
-    def _string_to_vertex(self, string: str) -> Vertex:
-        reg = re.sub(r'[(){}<>\[\]]', '', string).split()
-        return Vertex(num(reg[0]), num(reg[1]), num(reg[2]))
-
-    def _string_to_3x_vertex(self, string: str):
-        # TODO: Clean this up
-        reg = re.sub(r'[(){}<>]', '', string).split()
-        clean = []
-        for i in reg:
-            clean.append(num(i))
-        return clean
-
-    def _string_to_color(self, string: str) -> Color:
-        temp = string.split()
-        return Color(int(temp[0]), int(temp[1]), int(temp[2]))
-
-    def _string_to_color_light(self, string: str) -> ColorLight:
-        temp = string.split()
-        return ColorLight(int(temp[0]), int(temp[1]), int(temp[2]), int(temp[3]))
-
-    def _string_to_uvaxis(self, string: str) -> UVaxis:
-        reg = re.sub(r'[\[\]]', '', string).split()
-        return UVaxis(*reg)
 
     def _dic_and_children(self, dic, children):
         if dic is None:
@@ -199,8 +211,10 @@ class VisGroups(Common):
         for child in children:
             self.visgroup.append(VisGroup(child.dic, child.children))
 
-    def new_visgroup(self, name: str):
-        self.visgroup.append(VisGroup({"name": name}))
+    def new_visgroup(self, name: str) -> VisGroup:
+        v = VisGroup({"name": name})
+        self.visgroup.append(v)
+        return v
 
     def get_visgroups(self) -> List[VisGroup]:
         return self.visgroup
@@ -333,6 +347,17 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
         return ((abs(self.x - other.x) < accuracy) and
                 (abs(self.y - other.y) < accuracy) and
                 (abs(self.z - other.z) < accuracy))
+
+    def multiply(self, amount):
+        """
+        Multiplies all the axes uniformly by the given amount
+
+        :param amount: How much to multiply each axis by
+        :type amount: :obj:`int` or :obj:`float`
+        """
+        self.x *= amount
+        self.y *= amount
+        self.z *= amount
 
     def divide(self, amount):
         """
@@ -996,7 +1021,7 @@ class Editor(Common):
         self.parent_type = parent_type  # This is not used in the VMF
 
         self.color = dic.pop("color", "0 0 0")
-        self.color = self._string_to_color(self.color)
+        self.color = Convert.string_to_color(self.color)
         self.groupid = dic.pop("groupid", None)
         self.visgroupid = dic.pop("visgroupid", None)
         self.visgroupshown = dic.pop("visgroupshown", 1)
@@ -1066,17 +1091,14 @@ class Side(Common):
         self.id = dic.pop("id", self.ids())
 
         p = dic.pop("plane", "(0 0 0) (0 0 0) (0 0 0)")
-        t = self._string_to_3x_vertex(p)
-        self.plane = [Vertex(t[0], t[1], t[2]),
-                      Vertex(t[3], t[4], t[5]),
-                      Vertex(t[6], t[7], t[8])]
+        self.plane = Convert.string_to_3x_vertex(p)
 
         self.material = dic.pop("material", "TOOLS/TOOLSNODRAW")
 
         self.uaxis = dic.pop("uaxis", "[1 0 0 0] 0.5")
-        self.uaxis = self._string_to_uvaxis(self.uaxis)
+        self.uaxis = Convert.string_to_uvaxis(self.uaxis)
         self.vaxis = dic.pop("vaxis", "[0 -1 0 0] 0.5")
-        self.vaxis = self._string_to_uvaxis(self.vaxis)
+        self.vaxis = Convert.string_to_uvaxis(self.vaxis)
 
         self.rotation = dic.pop("rotation", 0)
         self.lightmapscale = dic.pop("lightmapscale", 16)
@@ -1201,7 +1223,7 @@ class DispInfo(Common):
         """The displacement power, can only be 2, 3 or 4"""
 
         startposition = dic.pop("startposition", "[0 0 0]")
-        self.startposition = self._string_to_vertex(startposition)
+        self.startposition = Convert.string_to_vertex(startposition)
         self.startposition.normal = 1
         self.flags = dic.pop("flags", 0)
         self.elevation = dic.pop("elevation", 0)
@@ -1656,7 +1678,7 @@ class Entity(Common):
 
         self.other = dic
         if "origin" in dic:
-            self.other["origin"] = self._string_to_vertex(dic["origin"])
+            self.other["origin"] = Convert.string_to_vertex(dic["origin"])
         self.export_list = ["id", "classname"]
 
         self.connections = []
@@ -1687,7 +1709,7 @@ class Light(Entity):
         self._fifty_percent_distance = self.other.pop("_fifty_percent_distance", 0)
         self._hardfalloff = self.other.pop("_hardfalloff", 0)
         _light = self.other.pop("_light", "255 255 255 200")
-        self._light = self._string_to_color_light(_light)
+        self._light = Convert.string_to_color_light(_light)
         self._lightHDR = self.other.pop("_lightHDR", "[-1 -1 -1 1]")
         self._lightscaleHDR = self.other.pop("_lightscaleHDR", 1)
         self._linear_attn = self.other.pop("_linear_attn", 0)
@@ -1709,7 +1731,7 @@ class PropStatic(Entity):
         super(PropStatic, self).__init__(dic, children)
 
         angles = self.other.pop("angles", "0 0 0")
-        self.angles = self._string_to_vertex(angles)
+        self.angles = Convert.string_to_vertex(angles)
         self.disableflashlight = self.other.pop("disableflashlight", 0)
         self.disableselfshadowing = self.other.pop("disableselfshadowing", 0)
         self.disableshadowdepth = self.other.pop("disableshadowdepth", 0)
@@ -1729,7 +1751,7 @@ class PropStatic(Entity):
         self.preventpropcombine = self.other.pop("preventpropcombine", 0)
         self.renderamt = self.other.pop("renderamt", 255)
         rendercolor = self.other.pop("rendercolor", "255 255 255")
-        self.rendercolor = self._string_to_color(rendercolor)
+        self.rendercolor = Convert.string_to_color(rendercolor)
         self.screenspacefade = self.other.pop("screenspacefade", 0)
         self.shadowdepthnocache = self.other.pop("shadowdepthnocache", 0)
         self.skin = self.other.pop("skin", 0)
@@ -1834,10 +1856,10 @@ class Box(Common):
         dic = self._dic(dic)
 
         mins = dic.pop("mins", "(0 0 0)")
-        self.mins = self._string_to_vertex(mins)
+        self.mins = Convert.string_to_vertex(mins)
         self.mins.normal = 2
         maxs = dic.pop("maxs", "(0 0 0)")
-        self.maxs = self._string_to_vertex(maxs)
+        self.maxs = Convert.string_to_vertex(maxs)
         self.maxs.normal = 2
 
         self.other = dic
@@ -2201,7 +2223,7 @@ class VMF:
 
     def add_to_visgroup(self, name: str, *args):
         """
-        Adds the given elements to an existing visgroup
+        Adds the given elements to a visgroup, if it doesn't exist one is created
 
         :param name: Name of the visgroup
         :type name: :obj:`str`
@@ -2211,6 +2233,9 @@ class VMF:
         for visgroup in self.visgroups.get_visgroups():
             if visgroup.name == name:
                 v_id = visgroup.visgroupid
+
+        if v_id is None:
+            v_id = self.visgroups.new_visgroup(name).visgroupid
 
         for item in args:
             item.editor.visgroupid = v_id

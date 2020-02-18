@@ -10,10 +10,10 @@ PyVMF
    :toctree: stubs
    
    VMF
-   SolidGenerator
    Solid
-   EntityGenerator
+   SolidGenerator
    Entity
+   EntityGenerator
    Side
    Vertex
    DispInfo
