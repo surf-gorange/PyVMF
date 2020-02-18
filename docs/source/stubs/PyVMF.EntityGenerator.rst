@@ -15,6 +15,7 @@ PyVMF.EntityGenerator
    
       ~EntityGenerator.__init__
       ~EntityGenerator.light
+      ~EntityGenerator.prop_static
    
    
 

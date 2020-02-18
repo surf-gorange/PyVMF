@@ -17,6 +17,7 @@ PyVMF.SolidGenerator
       ~SolidGenerator.cube
       ~SolidGenerator.dev_material
       ~SolidGenerator.displacement_triangle
+      ~SolidGenerator.room
    
    
 

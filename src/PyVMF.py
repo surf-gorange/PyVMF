@@ -265,12 +265,12 @@ class World(Common):
         self.export_list = ["id", "mapversion", "classname", "detailmaterial", "detailvbsp", "maxpropscreenwidth",
                             "skyname"]
 
-        self.solid = []
+        self.solids = []
         self.hidden = []
         self.group = []
         for child in children:
             if str(child) == Solid.NAME:
-                self.solid.append(Solid(child.dic, child.children))
+                self.solids.append(Solid(child.dic, child.children))
 
             elif str(child) == Hidden.NAME:
                 self.hidden.append(Hidden(child.dic, child.children))
@@ -279,7 +279,7 @@ class World(Common):
                 self.group.append(Group(child.dic, child.children))
 
     def export_children(self):
-        return (*self.solid, *self.hidden, *self.group)
+        return (*self.solids, *self.hidden, *self.group)
 
 
 class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_vertex function)
@@ -300,13 +300,15 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
         self.z = z
 
         self.sorting = 0  # Used in solid get_3d_extremity
-        self.normal = True  # Vertices are represented differently in the VMF depending on the class
+        self.normal = 0  # Vertices are represented differently in the VMF depending on the class
 
     def __str__(self):
-        if self.normal:
+        if not self.normal:
             return f"{self.x} {self.y} {self.z}"
-        else:
+        elif self.normal == 1:
             return f"[{self.x} {self.y} {self.z}]"
+        elif self.normal == 2:
+            return f"({self.x} {self.y} {self.z})"
 
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y and self.z == other.z
@@ -1200,7 +1202,7 @@ class DispInfo(Common):
 
         startposition = dic.pop("startposition", "[0 0 0]")
         self.startposition = self._string_to_vertex(startposition)
-        self.startposition.normal = False
+        self.startposition.normal = 1
         self.flags = dic.pop("flags", 0)
         self.elevation = dic.pop("elevation", 0)
         self.subdiv = dic.pop("subdiv", 0)
@@ -1631,16 +1633,16 @@ class Hidden(Common):
         self.export_list = []
 
         self.entity = None
-        self.solid = None
+        self.solids = None
         for child in children:
             if str(child) == Entity.NAME:
                 self.entity = Entity(child.dic, child.children)
 
             elif str(child) == Solid.NAME:
-                self.solid = Solid(child.dic, child.children)
+                self.solids = Solid(child.dic, child.children)
 
     def export_children(self):
-        return self.entity, self.solid
+        return self.entity, self.solids
 
 
 class Entity(Common):
@@ -1658,11 +1660,11 @@ class Entity(Common):
         self.export_list = ["id", "classname"]
 
         self.connections = []
-        self.solid = []
+        self.solids = []
         self.editor = None
         for child in children:
             if str(child) == Solid.NAME:
-                self.solid.append(Solid(child.dic, child.children))
+                self.solids.append(Solid(child.dic, child.children))
 
             elif str(child) == Editor.NAME:
                 self.editor = Editor(child.dic, Entity.NAME)
@@ -1671,7 +1673,7 @@ class Entity(Common):
                 self.connections.append(Connections(child.dic))
 
     def export_children(self):
-        return (*self.connections, *self.solid, self.editor)
+        return (*self.connections, *self.solids, self.editor)
 
 
 class Light(Entity):
@@ -1698,6 +1700,50 @@ class Light(Entity):
         self.export_list = ["id", "classname", "_constant_attn", "_distance", "_fifty_percent_distance",
                             "_hardfalloff", "_light", "_lightHDR", "_lightscaleHDR", "_linear_attn", "_quadratic_attn",
                             "_quadratic_attn", "_zero_percent_distance", "spawnflags", "style", "origin"]
+
+
+class PropStatic(Entity):
+    SUBNAME = "prop_static"
+
+    def __init__(self, dic: dict = None, children: list = None):
+        super(PropStatic, self).__init__(dic, children)
+
+        angles = self.other.pop("angles", "0 0 0")
+        self.angles = self._string_to_vertex(angles)
+        self.disableflashlight = self.other.pop("disableflashlight", 0)
+        self.disableselfshadowing = self.other.pop("disableselfshadowing", 0)
+        self.disableshadowdepth = self.other.pop("disableshadowdepth", 0)
+        self.disableshadows = self.other.pop("disableshadows", 0)
+        self.disablevertexlighting = self.other.pop("disablevertexlighting", 0)
+        self.disableX360 = self.other.pop("disableX360", 0)
+        self.drawinfastreflection = self.other.pop("drawinfastreflection", 0)
+        self.enablelightbounce = self.other.pop("enablelightbounce", 0)
+        self.fademaxdist = self.other.pop("fademaxdist", 0)
+        self.fademindist = self.other.pop("fademindist", -1)
+        self.fadescale = self.other.pop("fadescale", 1)
+        self.ignorenormals = self.other.pop("ignorenormals", 0)
+        self.maxcpulevel = self.other.pop("maxcpulevel", 0)
+        self.maxgpulevel = self.other.pop("maxgpulevel", 0)
+        self.mincpulevel = self.other.pop("mincpulevel", 0)
+        self.mingpulevel = self.other.pop("mingpulevel", 0)
+        self.preventpropcombine = self.other.pop("preventpropcombine", 0)
+        self.renderamt = self.other.pop("renderamt", 255)
+        rendercolor = self.other.pop("rendercolor", "255 255 255")
+        self.rendercolor = self._string_to_color(rendercolor)
+        self.screenspacefade = self.other.pop("screenspacefade", 0)
+        self.shadowdepthnocache = self.other.pop("shadowdepthnocache", 0)
+        self.skin = self.other.pop("skin", 0)
+        self.solid = self.other.pop("solid", 6)
+        self.uniformscale = self.other.pop("uniformscale", 1)
+        self.origin = self.other.pop("origin", Vertex(0, 0, 0))
+        self.model = self.other.pop("model", "")
+
+        self.export_list = ["id", "classname", "angles", "disableflashlight", "disableselfshadowing",
+                            "disableshadowdepth", "disableshadows", "disablevertexlighting", "disableX360",
+                            "drawinfastreflection", "enablelightbounce", "fademaxdist", "fademindist", "fadescale",
+                            "ignorenormals", "maxcpulevel", "maxgpulevel", "mincpulevel", "mingpulevel",
+                            "preventpropcombine", "renderamt", "rendercolor", "screenspacefade", "shadowdepthnocache",
+                            "skin", "solid", "uniformscale", "origin", "model"]
 
 
 class Connections(Common):
@@ -1789,8 +1835,10 @@ class Box(Common):
 
         mins = dic.pop("mins", "(0 0 0)")
         self.mins = self._string_to_vertex(mins)
+        self.mins.normal = 2
         maxs = dic.pop("maxs", "(0 0 0)")
         self.maxs = self._string_to_vertex(maxs)
+        self.maxs.normal = 2
 
         self.other = dic
         self.export_list = ["mins", "maxs"]
@@ -1975,6 +2023,36 @@ class EntityGenerator:
 
         return l
 
+    @staticmethod
+    def prop_static(origin: Vertex, model: str, angle: Vertex = Vertex(0, 0, 0),
+                    color: Color = Color(255, 255, 255), scale: int = 1) -> PropStatic:
+        """
+        Generates a basic prop static
+
+        :param origin: The position of the prop in the world
+        :type origin: :class:`Vertex`
+        :param model: The name of the prop (ex: models/penguin/penguin.mdl)
+        :type model: :obj:`str`
+        :param angle: The rotation of the prop in the world
+        :type angle: :class:`Vertex`
+        :param color: Color of the prop
+        :type color: :class:`Color`
+        :param scale: Size of the prop
+        :type scale: :obj:`int`
+        :return: A generated prop static
+        :rtype: :class:`PropStatic`
+        """
+        s = PropStatic({"classname": PropStatic.SUBNAME})
+        s.origin = origin
+        s.model = model
+        s.angles = angle
+        s.rendercolor = color
+        s.uniformscale = scale
+
+        s.editor = Editor()
+
+        return s
+
 
 class VMF:
     """
@@ -2003,7 +2081,7 @@ class VMF:
         # OTHER VARIABLES
         self.file = None
 
-    def get_solids(self, include_hidden=False, include_solid_entities=True) -> List[Solid]:
+    def get_solids(self, include_hidden=False, include_solid_entities=True) -> List[Solid, ...]:
         """
         Gets all the solids
 
@@ -2015,14 +2093,14 @@ class VMF:
         :rtype: :obj:`list` of :class:`Solid`
         """
         li = []
-        li.extend(self.world.solid)
+        li.extend(self.world.solids)
         if include_hidden:
             for s in self.world.hidden:
-                li.append(s.solid)
+                li.append(s.solids)
 
         if include_solid_entities:
             for e in self.entity:
-                for s in e.solid:
+                for s in e.solids:
                     li.append(s)
 
         if include_hidden:
@@ -2033,7 +2111,7 @@ class VMF:
 
         return li
 
-    def get_entities(self, include_hidden=False, include_solid_entities=False) -> List[Entity]:
+    def get_entities(self, include_hidden=False, include_solid_entities=False) -> List[Entity, ...]:
         """
         Gets all the entities
 
@@ -2048,11 +2126,11 @@ class VMF:
         if include_hidden:
             for h in self.hidden:
                 if h.entity is not None:
-                    if not h.entity.solid or include_solid_entities:
+                    if not h.entity.solids or include_solid_entities:
                         li.append(h.entity)
 
         for e in self.entity:
-            if not e.solid or include_solid_entities:
+            if not e.solids or include_solid_entities:
                 li.append(e)
 
         return li
@@ -2143,7 +2221,7 @@ class VMF:
 
         :param args: Solids to add
         """
-        self.world.solid.extend(args)
+        self.world.solids.extend(args)
 
     def add_entities(self, *args: Entity):
         """
@@ -2177,8 +2255,11 @@ class VMF:
             self.world = World(dic, children)
 
         elif name == Entity.NAME:
-            if dic["classname"] == Light.SUBNAME:
+            classname = dic["classname"]
+            if classname == Light.SUBNAME:
                 e = Light(dic, children)
+            elif classname == PropStatic.SUBNAME:
+                e = PropStatic(dic, children)
             else:
                 e = Entity(dic, children)
             self.entity.append(e)

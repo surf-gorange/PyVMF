@@ -1,0 +1,878 @@
+			"color" "0 126 143"
+			"color" "0 126 143"
+			"color" "0 126 143"
+			"color" "0 126 143"
+			"color" "0 126 143"
+			"color" "0 126 143"
+			"color" "0 180 0"
+			"color" "0 237 110"
+			"color" "220 30 220"
+			"cordonsolid" "1"
+			"cordonsolid" "1"
+			"cordonsolid" "1"
+			"cordonsolid" "1"
+			"cordonsolid" "1"
+			"cordonsolid" "1"
+			"id" "1"
+			"id" "13"
+			"id" "14"
+			"id" "15"
+			"id" "16"
+			"id" "17"
+			"id" "18"
+			"id" "2"
+			"id" "3"
+			"id" "31"
+			"id" "32"
+			"id" "33"
+			"id" "34"
+			"id" "35"
+			"id" "36"
+			"id" "37"
+			"id" "38"
+			"id" "39"
+			"id" "4"
+			"id" "40"
+			"id" "41"
+			"id" "42"
+			"id" "43"
+			"id" "44"
+			"id" "45"
+			"id" "46"
+			"id" "47"
+			"id" "48"
+			"id" "49"
+			"id" "5"
+			"id" "50"
+			"id" "51"
+			"id" "52"
+			"id" "53"
+			"id" "54"
+			"id" "55"
+			"id" "56"
+			"id" "57"
+			"id" "58"
+			"id" "59"
+			"id" "6"
+			"id" "60"
+			"id" "61"
+			"id" "62"
+			"id" "63"
+			"id" "64"
+			"id" "65"
+			"id" "66"
+			"id" "67"
+			"id" "68"
+			"id" "69"
+			"id" "70"
+			"id" "71"
+			"id" "72"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"lightmapscale" "128"
+			"material" "TOOLS/TOOLSNODRAW"
+			"material" "TOOLS/TOOLSNODRAW"
+			"material" "TOOLS/TOOLSNODRAW"
+			"material" "TOOLS/TOOLSNODRAW"
+			"material" "TOOLS/TOOLSNODRAW"
+			"material" "TOOLS/TOOLSNODRAW"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TOOLS/TOOLSSKYBOX"
+			"material" "TRASH/HR_T/HR_TRASH_A"
+			"material" "TRASH/HR_T/HR_TRASH_A"
+			"material" "TRASH/HR_T/HR_TRASH_A"
+			"material" "TRASH/HR_T/HR_TRASH_A"
+			"material" "TRASH/HR_T/HR_TRASH_A"
+			"material" "TRASH/HR_T/HR_TRASH_A"
+			"material" "TRASH/HR_T/HR_TRASH_A"
+			"material" "TRASH/HR_T/HR_TRASH_A"
+			"material" "TRASH/HR_T/HR_TRASH_A"
+			"material" "TRASH/HR_T/HR_TRASH_A"
+			"material" "TRASH/HR_T/HR_TRASH_A"
+			"material" "TRASH/HR_T/HR_TRASH_A"
+			"maxs" "(1856 1216 1280)"
+			"mins" "(-1792 -1280 -576)"
+			"plane" "(-16376 -16376 -16376) (16376 -16376 -16376) (16376 16376 -16376)"
+			"plane" "(-16376 16376 16376) (-16376 -16376 16376) (-16376 -16376 -16376)"
+			"plane" "(-16376 16376 16376) (-16376 -16376 16376) (-16376 -16376 -16376)"
+			"plane" "(-16376 16376 16376) (-16376 -16376 16376) (-16376 -16376 -16376)"
+			"plane" "(-16376 16376 16376) (16376 16376 16376) (16376 -16376 16376)"
+			"plane" "(-1792 -1280 -576) (-1792 -1280 1280) (-1792 1216 1280)"
+			"plane" "(-1792 -1280 -576) (1856 -1280 -576) (1856 1216 -576)"
+			"plane" "(-1792 -1280 -576) (1856 -1280 -576) (1856 1216 -576)"
+			"plane" "(-1792 -1280 -576) (1856 -1280 -576) (1856 1216 -576)"
+			"plane" "(-1792 -1280 -576) (1856 -1280 -576) (1856 1216 -576)"
+			"plane" "(-1792 -1280 1280) (-1792 -1280 -576) (1856 -1280 -576)"
+			"plane" "(-1792 1216 -576) (-1792 1216 1280) (1856 1216 1280)"
+			"plane" "(-1792 1216 1280) (-1792 -1280 1280) (-1792 -1280 -576)"
+			"plane" "(-1792 1216 1280) (-1792 -1280 1280) (-1792 -1280 -576)"
+			"plane" "(-1792 1216 1280) (1856 1216 1280) (1856 -1280 1280)"
+			"plane" "(-1792 1216 1280) (1856 1216 1280) (1856 -1280 1280)"
+			"plane" "(-1792 1216 1280) (1856 1216 1280) (1856 -1280 1280)"
+			"plane" "(-1792 1216 1280) (1856 1216 1280) (1856 -1280 1280)"
+			"plane" "(-512 -512 0) (512 -512 0) (512 512 0)"
+			"plane" "(-512 512 512) (-512 -512 512) (-512 -512 0)"
+			"plane" "(-512 512 512) (512 512 512) (512 -512 512)"
+			"plane" "(16376 -16376 -16376) (-16376 -16376 -16376) (-16376 -16376 16376)"
+			"plane" "(16376 -16376 -16376) (-16376 -16376 -16376) (-16376 -16376 16376)"
+			"plane" "(16376 -16376 -16376) (-16376 -16376 -16376) (-16376 -16376 16376)"
+			"plane" "(16376 -16376 -16376) (-16376 -16376 -16376) (-16376 -16376 16376)"
+			"plane" "(16376 -16376 -16376) (-16376 -16376 -16376) (-16376 -16376 16376)"
+			"plane" "(16376 16376 -16376) (16376 -16376 -16376) (16376 -16376 16376)"
+			"plane" "(16376 16376 -16376) (16376 -16376 -16376) (16376 -16376 16376)"
+			"plane" "(16376 16376 -16376) (16376 -16376 -16376) (16376 -16376 16376)"
+			"plane" "(16376 16376 16376) (-16376 16376 16376) (-16376 16376 -16376)"
+			"plane" "(16376 16376 16376) (-16376 16376 16376) (-16376 16376 -16376)"
+			"plane" "(16376 16376 16376) (-16376 16376 16376) (-16376 16376 -16376)"
+			"plane" "(16376 16376 16376) (-16376 16376 16376) (-16376 16376 -16376)"
+			"plane" "(16376 16376 16376) (-16376 16376 16376) (-16376 16376 -16376)"
+			"plane" "(1856 -1280 1280) (1856 -1280 -576) (1856 1216 -576)"
+			"plane" "(1856 -1280 1280) (1856 1216 1280) (-1792 1216 1280)"
+			"plane" "(1856 1216 -576) (1856 -1280 -576) (-1792 -1280 -576)"
+			"plane" "(1856 1216 -576) (1856 -1280 -576) (1856 -1280 1280)"
+			"plane" "(1856 1216 -576) (1856 -1280 -576) (1856 -1280 1280)"
+			"plane" "(209.149 494.851 800.193) (430.851 366.851 800.193) (302.851 145.149 800.193)"
+			"plane" "(209.149 494.851 800.193) (81.1487 273.149 800.193) (81.1487 273.149 509.193)"
+			"plane" "(226.295 93.6992 509.193) (98.2962 -128 509.193) (319.994 -256 509.193)"
+			"plane" "(226.299 93.7031 509.192) (447.999 -34.2956 509.192) (447.998 -34.2949 800.193)"
+			"plane" "(302.851 145.149 509.193) (81.1487 273.149 509.193) (81.1487 273.149 800.193)"
+			"plane" "(319.998 -256 509.192) (98.2949 -128 509.192) (98.2988 -128.002 800.193)"
+			"plane" "(430.851 366.851 509.193) (302.851 145.149 509.193) (302.851 145.149 800.193)"
+			"plane" "(430.851 366.851 800.193) (209.149 494.851 800.193) (209.149 494.851 509.193)"
+			"plane" "(447.998 -34.2969 509.192) (319.998 -256 509.192) (319.998 -255.996 800.193)"
+			"plane" "(512 -512 0) (-512 -512 0) (-512 -512 512)"
+			"plane" "(512 512 0) (512 -512 0) (512 -512 512)"
+			"plane" "(512 512 512) (-512 512 512) (-512 512 0)"
+			"plane" "(81.1487 273.149 509.193) (302.851 145.149 509.193) (430.851 366.851 509.193)"
+			"plane" "(98.2969 -128 509.192) (226.295 93.6992 509.192) (226.297 93.7031 800.193)"
+			"plane" "(98.2988 -128 800.193) (226.295 93.6953 800.193) (447.996 -34.2969 800.193)"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"rotation" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"smoothing_groups" "0"
+			"uaxis" "[0 1 0 0] 0.5"
+			"uaxis" "[0 1 0 0] 0.5"
+			"uaxis" "[0 1 0 0] 0.5"
+			"uaxis" "[0 1 0 0] 0.5"
+			"uaxis" "[0 1 0 0] 0.5"
+			"uaxis" "[0 1 0 0] 0.5"
+			"uaxis" "[0 1 0 0] 0.5"
+			"uaxis" "[0 1 0 0] 0.5"
+			"uaxis" "[0 1 0 0] 0.5"
+			"uaxis" "[0 1 0 0] 0.5"
+			"uaxis" "[0 1 0 0] 0.5"
+			"uaxis" "[0 1 0 0] 0.5"
+			"uaxis" "[0 1 0 0] 0.5"
+			"uaxis" "[0 1 0 0] 0.5"
+			"uaxis" "[0.5 0.866025 0 -170.256] 0.5"
+			"uaxis" "[0.5 0.866025 0 -170.256] 0.5"
+			"uaxis" "[0.5 0.866025 0 507.407] 0.5"
+			"uaxis" "[0.5 0.866025 0 507.407] 0.5"
+			"uaxis" "[0.866025 -0.5 0 -42.252] 0.5"
+			"uaxis" "[0.866025 -0.5 0 -42.252] 0.5"
+			"uaxis" "[0.866025 -0.5 0 -42.252] 0.5"
+			"uaxis" "[0.866025 -0.5 0 -42.252] 0.5"
+			"uaxis" "[0.866025 -0.5 0 388.595] 0.5"
+			"uaxis" "[0.866025 -0.5 0 388.595] 0.5"
+			"uaxis" "[0.866025 -0.5 0 388.595] 0.5"
+			"uaxis" "[0.866025 -0.5 0 388.595] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"uaxis" "[1 0 0 0] 0.5"
+			"vaxis" "[-0.5 -0.866025 0 -507.407] 0.5"
+			"vaxis" "[-0.5 -0.866025 0 -507.407] 0.5"
+			"vaxis" "[-0.5 -0.866025 0 170.256] 0.5"
+			"vaxis" "[-0.5 -0.866025 0 170.256] 0.5"
+			"vaxis" "[0 -1 0 0] 0.5"
+			"vaxis" "[0 -1 0 0] 0.5"
+			"vaxis" "[0 -1 0 0] 0.5"
+			"vaxis" "[0 -1 0 0] 0.5"
+			"vaxis" "[0 -1 0 0] 0.5"
+			"vaxis" "[0 -1 0 0] 0.5"
+			"vaxis" "[0 -1 0 0] 0.5"
+			"vaxis" "[0 -1 0 0] 0.5"
+			"vaxis" "[0 -1 0 0] 0.5"
+			"vaxis" "[0 -1 0 0] 0.5"
+			"vaxis" "[0 -1 0 0] 0.5"
+			"vaxis" "[0 -1 0 0] 0.5"
+			"vaxis" "[0 -1 0 0] 0.5"
+			"vaxis" "[0 -1 0 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"visgroupautoshown" "1"
+			"visgroupautoshown" "1"
+			"visgroupautoshown" "1"
+			"visgroupautoshown" "1"
+			"visgroupautoshown" "1"
+			"visgroupautoshown" "1"
+			"visgroupautoshown" "1"
+			"visgroupautoshown" "1"
+			"visgroupautoshown" "1"
+			"visgroupshown" "1"
+			"visgroupshown" "1"
+			"visgroupshown" "1"
+			"visgroupshown" "1"
+			"visgroupshown" "1"
+			"visgroupshown" "1"
+			"visgroupshown" "1"
+			"visgroupshown" "1"
+			"visgroupshown" "1"
+		"active" "1"
+		"color" "0 180 0"
+		"color" "220 30 220"
+		"color" "220 30 220"
+		"color" "220 30 220"
+		"color" "255 255 0"
+		"color" "80 150 225"
+		"id" "2"
+		"id" "339"
+		"id" "374"
+		"id" "388"
+		"id" "390"
+		"id" "392"
+		"id" "394"
+		"id" "396"
+		"id" "398"
+		"logicalpos" "[0 0]"
+		"logicalpos" "[0 0]"
+		"logicalpos" "[0 4500]"
+		"logicalpos" "[0 5000]"
+		"logicalpos" "[0 500]"
+		"logicalpos" "[0 500]"
+		"look" "[1121.66 -627.685 808.619]"
+		"name" "cordon"
+		"position" "[1122.41 -628.249 808.955]"
+		"visgroupautoshown" "1"
+		"visgroupautoshown" "1"
+		"visgroupautoshown" "1"
+		"visgroupautoshown" "1"
+		"visgroupautoshown" "1"
+		"visgroupautoshown" "1"
+		"visgroupshown" "1"
+		"visgroupshown" "1"
+		"visgroupshown" "1"
+		"visgroupshown" "1"
+		"visgroupshown" "1"
+		"visgroupshown" "1"
+		box
+		editor
+		editor
+		editor
+		editor
+		editor
+		editor
+		editor
+		editor
+		editor
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		side
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		{
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+		}
+	"BasisNormal" "0 -1 0"
+	"BasisOrigin" "-27.771 -512 266.526"
+	"BasisU" "1 0 0"
+	"BasisV" "-0 0 1"
+	"CheckDestIfClearForPlayer" "0"
+	"EndU" "1"
+	"EndV" "0"
+	"StartDisabled" "0"
+	"StartU" "0"
+	"StartV" "1"
+	"UseLandmarkAngles" "0"
+	"_constant_attn" "0"
+	"_distance" "0"
+	"_fifty_percent_distance" "0"
+	"_hardfalloff" "0"
+	"_light" "255 255 255 200"
+	"_lightHDR" "-1 -1 -1 1"
+	"_lightscaleHDR" "1"
+	"_linear_attn" "0"
+	"_quadratic_attn" "1"
+	"_zero_percent_distance" "0"
+	"active" "1"
+	"activecamera" "0"
+	"angles" "0 0 0"
+	"angles" "0 0 0"
+	"bShow3DGrid" "0"
+	"bShowGrid" "1"
+	"bShowLogicalGrid" "0"
+	"bSnapToGrid" "1"
+	"classname" "func_detail"
+	"classname" "info_overlay"
+	"classname" "info_player_terrorist"
+	"classname" "light"
+	"classname" "prop_static"
+	"classname" "trigger_teleport"
+	"classname" "worldspawn"
+	"detailmaterial" "detail/detailsprites"
+	"detailvbsp" "detail.vbsp"
+	"disableX360" "0"
+	"disableflashlight" "0"
+	"disableselfshadowing" "0"
+	"disableshadowdepth" "0"
+	"disableshadows" "0"
+	"disablevertexlighting" "0"
+	"drawinfastreflection" "0"
+	"editorbuild" "8456"
+	"editorversion" "400"
+	"enabled" "1"
+	"enablelightbounce" "0"
+	"fademaxdist" "0"
+	"fademindist" "-1"
+	"fademindist" "-1"
+	"fadescale" "1"
+	"formatversion" "100"
+	"id" "1"
+	"id" "101"
+	"id" "3"
+	"id" "349"
+	"id" "366"
+	"id" "379"
+	"id" "83"
+	"ignorenormals" "0"
+	"mapversion" "8"
+	"mapversion" "8"
+	"material" "trash/hr_t/hr_trash_a"
+	"maxcpulevel" "0"
+	"maxgpulevel" "0"
+	"maxpropscreenwidth" "-1"
+	"mincpulevel" "0"
+	"mingpulevel" "0"
+	"model" "models/penguin/penguin.mdl"
+	"nGridSpacing" "64"
+	"origin" "-27.771 -512 266.526"
+	"origin" "-347.576 414.607 513"
+	"origin" "-99.9088 -66.1541 513"
+	"origin" "256 320 654.69"
+	"origin" "305.665 -332.453 513"
+	"prefab" "0"
+	"preventpropcombine" "0"
+	"renderamt" "255"
+	"rendercolor" "255 255 255"
+	"screenspacefade" "0"
+	"shadowdepthnocache" "0"
+	"sides" "6"
+	"skin" "0"
+	"skyname" "sky_dust"
+	"solid" "6"
+	"spawnflags" "0"
+	"spawnflags" "4097"
+	"style" "0"
+	"uniformscale" "14.50"
+	"uv0" "-197.359 -103.778 0"
+	"uv1" "-197.359 152.222 0"
+	"uv2" "237.124 135.213 0"
+	"uv3" "157.595 -183.657 0"
+	camera
+	cordon
+	editor
+	editor
+	editor
+	editor
+	editor
+	editor
+	solid
+	solid
+	solid
+	solid
+	solid
+	solid
+	solid
+	solid
+	solid
+	{
+	{
+	{
+	{
+	{
+	{
+	{
+	{
+	{
+	{
+	{
+	{
+	{
+	{
+	{
+	{
+	{
+	}
+	}
+	}
+	}
+	}
+	}
+	}
+	}
+	}
+	}
+	}
+	}
+	}
+	}
+	}
+	}
+	}
+cameras
+cordons
+entity
+entity
+entity
+entity
+entity
+entity
+versioninfo
+viewsettings
+visgroups
+world
+{
+{
+{
+{
+{
+{
+{
+{
+{
+{
+{
+{
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}

@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "8456"
-	"mapversion" "6"
+	"mapversion" "14"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,90 +20,189 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "6"
+	"mapversion" "14"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
 	"maxpropscreenwidth" "-1"
 	"skyname" "sky_dust"
-	hidden
+	solid
 	{
-		solid
+		"id" "57"
+		side
+		{
+			"id" "1"
+			"plane" "(128 128 19.7719) (256 128 19.7719) (256 64 19.7719)"
+			"material" "/RAFFLE_OVERLAY"
+			"uaxis" "[1 0 0 0] 0.5"
+			"vaxis" "[0 -1 0 0] 0.5"
+			"rotation" "0"
+			"lightmapscale" "128"
+			"smoothing_groups" "0"
+		}
+		side
 		{
 			"id" "2"
-			side
-			{
-				"id" "1"
-				"plane" "(-1024 0 2048) (-1024 64 2048) (1024 64 2048)"
-				"material" "TOOLS/TOOLSNODRAW"
-				"uaxis" "[1 0 0 0] 0.5"
-				"vaxis" "[0 -1 0 0] 0.5"
-				"rotation" "0"
-				"lightmapscale" "128"
-				"smoothing_groups" "0"
-			}
-			side
-			{
-				"id" "2"
-				"plane" "(-1024 64 0) (-1024 0 0) (1024 0 0)"
-				"material" "TOOLS/TOOLSNODRAW"
-				"uaxis" "[1 0 0 0] 0.5"
-				"vaxis" "[0 -1 0 0] 0.5"
-				"rotation" "0"
-				"lightmapscale" "128"
-				"smoothing_groups" "0"
-			}
-			side
-			{
-				"id" "3"
-				"plane" "(-1024 0 0) (-1024 64 0) (-1024 64 2048)"
-				"material" "TOOLS/TOOLSNODRAW"
-				"uaxis" "[0 1 0 0] 0.5"
-				"vaxis" "[0 0 -1 0] 0.5"
-				"rotation" "0"
-				"lightmapscale" "128"
-				"smoothing_groups" "0"
-			}
-			side
-			{
-				"id" "4"
-				"plane" "(1024 64 0) (1024 0 0) (1024 0 2048)"
-				"material" "TOOLS/TOOLSNODRAW"
-				"uaxis" "[0 1 0 0] 0.5"
-				"vaxis" "[0 0 -1 0] 0.5"
-				"rotation" "0"
-				"lightmapscale" "128"
-				"smoothing_groups" "0"
-			}
-			side
-			{
-				"id" "5"
-				"plane" "(-1024 64 0) (1024 64 0) (1024 64 2048)"
-				"material" "TOOLS/TOOLSNODRAW"
-				"uaxis" "[1 0 0 0] 0.5"
-				"vaxis" "[0 0 -1 0] 0.5"
-				"rotation" "0"
-				"lightmapscale" "128"
-				"smoothing_groups" "0"
-			}
-			side
-			{
-				"id" "6"
-				"plane" "(1024 0 0) (-1024 0 0) (-1024 0 2048)"
-				"material" "TOOLS/TOOLSNODRAW"
-				"uaxis" "[1 0 0 0] 0.5"
-				"vaxis" "[0 0 -1 0] 0.5"
-				"rotation" "0"
-				"lightmapscale" "128"
-				"smoothing_groups" "0"
-			}
-			editor
-			{
-				"color" "0 119 208"
-				"visgroupshown" "1"
-				"visgroupautoshown" "1"
-			}
+			"plane" "(128 64 -0.228088) (256 64 -0.228088) (256 128 -0.228088)"
+			"material" "/RAFFLE_OVERLAY"
+			"uaxis" "[1 0 0 0] 0.5"
+			"vaxis" "[0 -1 0 0] 0.5"
+			"rotation" "0"
+			"lightmapscale" "128"
+			"smoothing_groups" "0"
 		}
+		side
+		{
+			"id" "3"
+			"plane" "(128 128 19.7719) (128 64 19.7719) (128 64 -0.228088)"
+			"material" "/RAFFLE_OVERLAY"
+			"uaxis" "[0 1 0 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"rotation" "0"
+			"lightmapscale" "128"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "4"
+			"plane" "(256 128 -0.228088) (256 64 -0.228088) (256 64 19.7719)"
+			"material" "/RAFFLE_OVERLAY"
+			"uaxis" "[0 1 0 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"rotation" "0"
+			"lightmapscale" "128"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "5"
+			"plane" "(256 128 19.7719) (128 128 19.7719) (128 128 -0.228088)"
+			"material" "/RAFFLE_OVERLAY"
+			"uaxis" "[1 0 0 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"rotation" "0"
+			"lightmapscale" "128"
+			"smoothing_groups" "0"
+		}
+		side
+		{
+			"id" "6"
+			"plane" "(256 64 -0.228088) (128 64 -0.228088) (128 64 19.7719)"
+			"material" "/RAFFLE_OVERLAY"
+			"uaxis" "[1 0 0 0] 0.5"
+			"vaxis" "[0 0 -1 0] 0.5"
+			"rotation" "0"
+			"lightmapscale" "128"
+			"smoothing_groups" "0"
+		}
+		editor
+		{
+			"color" "0 130 183"
+			"visgroupshown" "1"
+			"visgroupautoshown" "1"
+		}
+	}
+}
+entity
+{
+	"id" "2"
+	"classname" "prop_static"
+	"angles" "0 0 0"
+	"disableflashlight" "0"
+	"disableselfshadowing" "0"
+	"disableshadowdepth" "0"
+	"disableshadows" "0"
+	"disablevertexlighting" "0"
+	"disableX360" "0"
+	"drawinfastreflection" "0"
+	"enablelightbounce" "0"
+	"fademaxdist" "0"
+	"fademindist" "-1"
+	"fadescale" "1"
+	"ignorenormals" "0"
+	"maxcpulevel" "0"
+	"maxgpulevel" "0"
+	"mincpulevel" "0"
+	"mingpulevel" "0"
+	"preventpropcombine" "0"
+	"renderamt" "255"
+	"rendercolor" "255 255 255"
+	"screenspacefade" "0"
+	"shadowdepthnocache" "0"
+	"skin" "0"
+	"solid" "6"
+	"uniformscale" "1"
+	"origin" "0 0 0"
+	editor
+	{
+		"color" "255 255 0"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "13"
+	"classname" "prop_detail"
+	"model" "models/penguin/penguin.mdl"
+	"skin" "0"
+	"origin" "192 -64 0"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
+	}
+}
+entity
+{
+	"id" "45"
+	"classname" "prop_dynamic"
+	"angles" "0 0 0"
+	"body" "0"
+	"DisableBoneFollowers" "0"
+	"disableflashlight" "0"
+	"disablereceiveshadows" "0"
+	"disableshadowdepth" "0"
+	"disableshadows" "0"
+	"disableX360" "0"
+	"drawinfastreflection" "0"
+	"ExplodeDamage" "0"
+	"ExplodeRadius" "0"
+	"fademaxdist" "0"
+	"fademindist" "-1"
+	"fadescale" "1"
+	"HoldAnimation" "0"
+	"is_autoaim_target" "0"
+	"MaxAnimTime" "10"
+	"maxcpulevel" "0"
+	"maxgpulevel" "0"
+	"MinAnimTime" "5"
+	"mincpulevel" "0"
+	"mingpulevel" "0"
+	"model" "models/penguin/penguin.mdl"
+	"PerformanceMode" "0"
+	"pressuredelay" "0"
+	"RandomAnimation" "0"
+	"renderamt" "255"
+	"rendercolor" "255 255 255"
+	"renderfx" "0"
+	"rendermode" "0"
+	"SetBodyGroup" "0"
+	"shadowdepthnocache" "0"
+	"skin" "0"
+	"solid" "6"
+	"spawnflags" "0"
+	"StartDisabled" "0"
+	"origin" "320 -128 0"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
 	}
 }
 cameras
@@ -113,8 +212,4 @@ cameras
 cordons
 {
 	"active" "0"
-}
-quickhide
-{
-	"count" "1"
 }
