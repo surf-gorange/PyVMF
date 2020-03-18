@@ -16,6 +16,8 @@ Check out the wiki for more information: https://github.com/GorangeNinja/PyVMF/w
 
 Check out the docs for explanations: https://pyvmf.readthedocs.io/en/latest/genindex.html
 
+Check out the Discord if you have any questions: https://discord.gg/VebMqb9
+
 # License
 
 MIT License (see license file)
