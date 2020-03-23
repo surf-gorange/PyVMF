@@ -9,6 +9,7 @@ from random import randint
 from tools import num
 from importer import *
 from typing import List, Tuple, Generator
+import warnings
 
 
 class Convert:
@@ -308,7 +309,7 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
     :type z: :obj:`int` or :obj:`float`
     """
 
-    def __init__(self, x, y, z):
+    def __init__(self, x=0, y=0, z=0):
         self.x = x
         self.y = y
         self.z = z
@@ -477,9 +478,9 @@ class Vertex(Common):  # Vertex has to be above the Solid class (see: set_pos_ve
         """
         Turns x, y and z into integers
         """
-        self.x = int(self.x)
-        self.y = int(self.y)
-        self.z = int(self.z)
+        self.x = round(self.x)
+        self.y = round(self.y)
+        self.z = round(self.z)
 
     def export(self) -> Tuple[int, int, int]:
         return (self.x,
@@ -634,7 +635,7 @@ class Solid(Common):
         :return: The average center of the solid
         :rtype: :class:`Vertex`
         """
-        v = Vertex(0, 0, 0)
+        v = Vertex()
         vert_list = self.get_only_unique_vertices()
         for vert in vert_list:
             v = v + vert
@@ -660,7 +661,7 @@ class Solid(Common):
         :return: The geometric center of the solid
         :rtype: :class:`Vertex`
         """
-        v = Vertex(0, 0, 0)
+        v = Vertex()
 
         x = self.get_axis_extremity(x=False).x
         y = self.get_axis_extremity(y=False).y
@@ -783,7 +784,7 @@ class Solid(Common):
 
         return Vertex(max(x) - min(x), max(y) - min(y), max(z) - min(z))
 
-    def get_displacement_sides(self) -> List[Side, ...]:
+    def get_displacement_sides(self) -> List[Side]:
         """
         Gets the sides that have displacements, use :func:`~Solid.get_displacement_matrix_sides` to get the matrices
         directly instead
@@ -1110,7 +1111,7 @@ class Side(Common):
         self.dispinfo = None
         for child in children:
             if str(child) == DispInfo.NAME:
-                self.dispinfo = DispInfo(child.dic, child.children)
+                self.dispinfo = DispInfo(child.dic, child.children, self)
 
     def __str__(self):
         return f"({self.plane[0]}) ({self.plane[1]}) ({self.plane[2]})"
@@ -1165,6 +1166,32 @@ class Side(Common):
         for vert in self.plane:
             vert.rotate_z(center, angle)
 
+    def get_naive_rotation(self) -> int:
+        """
+        Gets the rotation if and only if it's a multiple of 90, please don't use this if it's not necessary
+
+        :return: Rotation of the face either 0, 90, 180 or 270
+        :rtype: :obj:`int`
+        """
+        v1, v2 = Vector.vectors_from_side(self)
+        v1 = v1.angle_to_origin()
+        v2 = v2.angle_to_origin()
+
+        if v1 == 0 and v2 == 90:
+            return 0
+
+        if v1 == 90 and v2 == 0:
+            return 90
+
+        if v1 == 180 and v2 == 90:
+            return 180
+
+        if v1 == 90 and v2 == 180:
+            return 270
+
+        warnings.warn("Unable to determine rotation, default to 0")
+        return 0
+
     def flip(self, x=None, y=None, z=None):
         raise ValueError("The flip function doesn't currently work")
         for vert in self.plane:
@@ -1186,6 +1213,15 @@ class Side(Common):
 
     def get_vector(self):
         raise ValueError("Vectors not implemented yet")
+
+    def set_texture(self, new_material: str):
+        """
+        Sets the given texture on all sides
+
+        :param new_material: The texture to use
+        :type new_material: :obj:`str`
+        """
+        self.material = new_material
 
     def remove_displacement(self):
         """
@@ -1216,19 +1252,20 @@ class DispInfo(Common):
 
     NAME = "dispinfo"
 
-    def __init__(self, dic: dict = None, children: list = None):
+    def __init__(self, dic: dict = None, children: list = None, parent_side: Side = None):
         dic, children = self._dic_and_children(dic, children)
 
         self.power = dic.pop("power", 3)
         """The displacement power, can only be 2, 3 or 4"""
 
-        startposition = dic.pop("startposition", "[0 0 0]")
-        self.startposition = Convert.string_to_vertex(startposition)
-        self.startposition.normal = 1
+        _startposition = dic.pop("startposition", "[0 0 0]")
+        self._startposition = Convert.string_to_vertex(_startposition)
+        self._startposition.normal = 1
         self.flags = dic.pop("flags", 0)
         self.elevation = dic.pop("elevation", 0)
         self.subdiv = dic.pop("subdiv", 0)
 
+        self.parent_side = parent_side
         self.size = 0
         self.matrix_size_fix = 0
 
@@ -1268,6 +1305,32 @@ class DispInfo(Common):
             if str(child) == AllowedVerts.NAME:
                 self._allowed_verts = AllowedVerts(self.matrix, child.dic)
 
+    @property
+    def startposition(self):
+        return self._startposition
+
+    @startposition.setter
+    def startposition(self, value: Vertex):
+        self._startposition = value
+        self._startposition.normal = 1
+
+    def is_flipped(self) -> bool:
+        """
+        Finds out if the displacement has been flipped, might not work if the face is non rectangular
+
+        :return: If the displacement has been flipped
+        :rtype: :obj:`bool`
+        """
+        v1, v2 = Vector.vectors_from_side(self.parent_side)
+        if self.parent_side.plane[1].copy() + v1 + v2 == self.startposition:
+            return False
+
+        if self.parent_side.plane[1].copy() + v1 == self.startposition:
+            return True
+
+        warnings.warn("Unable to determine if flipped, default to False")
+        return False
+
     def export_children(self):
         return self._normals, self._distances, self._offsets, self._offset_normals, self._alphas, \
                self._triangle_tags, self._allowed_verts
@@ -1279,9 +1342,9 @@ class DispVert(Common):
     """
 
     def __init__(self):
-        self.normal = Vertex(0, 0, 0)
+        self.normal = Vertex()
         self.distance = 0
-        self.offset = Vertex(0, 0, 0)
+        self.offset = Vertex()
         self.offset_normal = Vertex(0, 0, 1)
         self.alpha = 0
         self.triangle_tag = None
@@ -1644,6 +1707,11 @@ class Vector(Common):
     def vector_from_2_vertices(cls, v1: Vertex, v2: Vertex):
         return Vector(*(v2 - v1).export())
 
+    @classmethod
+    def vectors_from_side(cls, side: Side) -> Tuple[Vector, Vector]:
+        return cls.vector_from_2_vertices(side.plane[1], side.plane[0]), \
+               cls.vector_from_2_vertices(side.plane[1], side.plane[2])
+
 
 class Hidden(Common):
     NAME = "hidden"
@@ -1717,7 +1785,7 @@ class Light(Entity):
         self._zero_percent_distance = self.other.pop("_zero_percent_distance", 0)
         self.spawnflags = self.other.pop("spawnflags", 0)
         self.style = self.other.pop("style", 0)
-        self.origin = self.other.pop("origin", Vertex(0, 0, 0))
+        self.origin = self.other.pop("origin", Vertex())
 
         self.export_list = ["id", "classname", "_constant_attn", "_distance", "_fifty_percent_distance",
                             "_hardfalloff", "_light", "_lightHDR", "_lightscaleHDR", "_linear_attn", "_quadratic_attn",
@@ -1757,7 +1825,7 @@ class PropStatic(Entity):
         self.skin = self.other.pop("skin", 0)
         self.solid = self.other.pop("solid", 6)
         self.uniformscale = self.other.pop("uniformscale", 1)
-        self.origin = self.other.pop("origin", Vertex(0, 0, 0))
+        self.origin = self.other.pop("origin", Vertex())
         self.model = self.other.pop("model", "")
 
         self.export_list = ["id", "classname", "angles", "disableflashlight", "disableselfshadowing",
@@ -1766,6 +1834,63 @@ class PropStatic(Entity):
                             "ignorenormals", "maxcpulevel", "maxgpulevel", "mincpulevel", "mingpulevel",
                             "preventpropcombine", "renderamt", "rendercolor", "screenspacefade", "shadowdepthnocache",
                             "skin", "solid", "uniformscale", "origin", "model"]
+
+
+class InfoDecal(Entity):
+    SUBNAME = "infodecal"
+
+    def __init__(self, dic: dict = None, children: list = None):
+        super(InfoDecal, self).__init__(dic, children)
+
+        self.texture = self.other.pop("texture", "tools/toolsnodraw")
+        self.origin = self.other.pop("origin", Vertex())
+
+        self.export_list = ["id", "classname", "texture", "origin"]
+
+
+class InfoOverlay(Entity):
+    SUBNAME = "info_overlay"
+
+    def __init__(self, dic: dict = None, children: list = None):
+        super(InfoOverlay, self).__init__(dic, children)
+
+        angles = self.other.pop("angles", "0 0 0")
+        self.angles = Convert.string_to_vertex(angles)
+        BasisNormal = self.other.pop("BasisNormal", "0 -1 0")
+        self.BasisNormal = Convert.string_to_vertex(BasisNormal)
+        BasisOrigin = self.other.pop("BasisOrigin", "0 0 0")
+        self.BasisOrigin = Convert.string_to_vertex(BasisOrigin)
+        BasisU = self.other.pop("BasisU", "1 0 0")
+        self.BasisU = Convert.string_to_vertex(BasisU)
+        BasisV = self.other.pop("BasisV", "0 0 1")
+        self.BasisV = Convert.string_to_vertex(BasisV)
+        self.EndU = self.other.pop("EndU", 1)
+        self.EndV = self.other.pop("EndV", 0)
+        self.fademindist = self.other.pop("fademindist", -1)
+        self.material = self.other.pop("material", "tools/toolsnodraw")
+        self.sides = self.other.pop("sides", "1")
+        self.StartU = self.other.pop("StartU", 0)
+        self.StartV = self.other.pop("StartV", 1)
+        uv0 = self.other.pop("uv0", "-128 -128 0")
+        self.uv0 = Convert.string_to_vertex(uv0)
+        uv1 = self.other.pop("uv1", "-128 128 0")
+        self.uv1 = Convert.string_to_vertex(uv1)
+        uv2 = self.other.pop("uv2", "128 128 0")
+        self.uv2 = Convert.string_to_vertex(uv2)
+        uv3 = self.other.pop("uv3", "128 -128 0")
+        self.uv3 = Convert.string_to_vertex(uv3)
+        self.origin = self.other.pop("origin", Vertex())
+
+        self.export_list = ["id", "classname", "angles", "BasisNormal", "BasisOrigin", "BasisU", "BasisV",
+                            "EndU", "EndV", "fademindist", "material", "sides", "StartU",
+                            "StartV", "uv0", "uv1", "uv2", "uv3", "origin"]
+
+    def add_sides(self, *sides: Side):
+        for side in sides:
+            if self.sides == "":
+                self.sides = str(side.id)
+            else:
+                self.sides += f" {side.id}"
 
 
 class Connections(Common):
@@ -1886,9 +2011,9 @@ class SolidGenerator:
         elif dev == 2:
             solid.set_texture("tools/toolsinvisibleladder")
         elif dev == 3:
-            solid.set_texture("tools/toolsdotted")
-        elif dev == 4:
             solid.set_texture("tools/bullet_hit_marker")
+        elif dev == 4:
+            solid.set_texture("tools/toolsdotted")
         elif dev == 5:
             solid.set_texture("tools/toolsblack")
 
@@ -2015,7 +2140,83 @@ class SolidGenerator:
         v.move(0, 0, ll + tt)
         s.append(SolidGenerator.cube(v, w, h, thick, True, dev))
 
+        for solid in s:
+            SolidGenerator.dev_material(solid, dev)
+
         return s
+
+    @staticmethod
+    def surf_ramp(vertex: Vertex, w, h, l, top_cut=32, side_cut=32, center=False, ramp_texture="cs_italy/cobble02",
+                  top_texture="cs_italy/plasterwall02a", side_texture="cs_italy/plasterwall02a") -> Solid:
+        """
+        Generates a ramp (triangle viewed from above: △)
+
+        :param vertex: Start position from which to build the ramp (bottom middle of the ramp)
+        :type vertex: :class:`Vertex`
+        :param w: Width of the ramp
+        :type w: :obj:`int`
+        :param h: Height of the ramp
+        :type h: :obj:`int`
+        :param l: Length of the ramp
+        :type l: :obj:`int`
+        :param top_cut: Width of the cut at the top
+        :type top_cut: :obj:`int`
+        :param side_cut: Height of the cut on the side
+        :type side_cut: :obj:`int`
+        :param center: If set to True centers the ramp on the vertex
+        :type center: :obj:`bool`
+        :param ramp_texture:
+        :type ramp_texture: :obj:`str`
+        :param top_texture:
+        :type top_texture: :obj:`str`
+        :param side_texture:
+        :type side_texture: :obj:`str`
+        :return: A generated ramp
+        :rtype: :class:`Solid`
+        """
+        ww = w / 2
+        hh = h
+        ll = l / 2
+
+        top_cut /= 2
+
+        x, y, z = vertex.export()
+        f1 = Side(dic={"plane": f"({x - ww} {y} {z}) ({x - w} {y + side_cut} {z}) ({x - top_cut} {y + hh} {z})"})
+        f2 = Side(dic={"plane": f"({x - ww} {y + side_cut} {z - ll}) ({x - ww} {y} {z - ll}) ({x + ww} {y} {z - ll})"})
+        f3 = Side(dic={"plane": f"({x - ww} {y} {z - ll}) ({x - ww} {y + side_cut} {z - ll}) "
+                                f"({x - ww} {y + side_cut} {z})"})
+        f4 = Side(dic={"plane": f"({x + ww} {y + side_cut} {z - ll}) ({x + ww} {y} {z - ll}) ({x + ww} {y} {z})"})
+        f5 = Side(dic={"plane": f"({x - top_cut} {y + hh} {z - ll}) ({x + top_cut} {y + hh} {z - ll}) "
+                                f"({x + top_cut} {y + hh} {z})"})
+        f6 = Side(dic={"plane": f"({x + ww} {y} {z - ll}) ({x - ww} {y} {z - ll}) ({x - ww} {y} {z})"})
+        f7 = Side(dic={"plane": f"({x - ww} {y + side_cut} {z - ll}) ({x - top_cut} {y + hh} {z - ll}) "
+                                f"({x - top_cut} {y + hh} {z})"})
+        f8 = Side(dic={"plane": f"({x + top_cut} {y + hh} {z - ll}) ({x + ww} {y + side_cut} {z - ll}) "
+                                f"({x + ww} {y + side_cut} {z})"})
+
+        solid = Solid()
+        f3.set_texture(side_texture)
+        f4.set_texture(side_texture)
+        f5.set_texture(top_texture)
+        f7.set_texture(ramp_texture)
+        f8.set_texture(ramp_texture)
+
+        if side_cut == 0 and top_cut == 0:
+            solid.add_sides(f1, f2, f6, f7, f8)
+        elif side_cut == 0:
+            print("ss")
+            solid.add_sides(f1, f2, f5, f6, f7, f8)
+        elif top_cut == 0:
+            solid.add_sides(f1, f2, f3, f4, f6, f7, f8)
+        else:
+            solid.add_sides(f1, f2, f3, f4, f5, f6, f7, f8)
+
+        solid.editor = Editor()
+
+        if center:
+            solid.center = Vertex(x, y, z)
+
+        return solid
 
 
 class EntityGenerator:
@@ -2046,7 +2247,7 @@ class EntityGenerator:
         return l
 
     @staticmethod
-    def prop_static(origin: Vertex, model: str, angle: Vertex = Vertex(0, 0, 0),
+    def prop_static(origin: Vertex, model: str, angle: Vertex = Vertex(),
                     color: Color = Color(255, 255, 255), scale: int = 1) -> PropStatic:
         """
         Generates a basic prop static
@@ -2070,6 +2271,50 @@ class EntityGenerator:
         s.angles = angle
         s.rendercolor = color
         s.uniformscale = scale
+
+        s.editor = Editor()
+
+        return s
+
+    @staticmethod
+    def info_decal(origin: Vertex, texture: str) -> InfoDecal:
+        """
+        Generates a basic decal
+
+        :param origin: The position of the decal in the world
+        :type origin: :class:`Vertex`
+        :param texture: The name of the texture (ex: "tools/toolsnodraw")
+        :type texture: :obj:`str`
+        :return: A generated decal
+        :rtype: :class:`InfoDecal`
+        """
+        s = InfoDecal({"classname": InfoDecal.SUBNAME})
+        s.origin = origin
+        s.texture = texture
+
+        s.editor = Editor()
+
+        return s
+
+    @staticmethod
+    def info_overlay(origin: Vertex, texture: str, angle: Vertex = Vertex(), *sides: Side) -> InfoOverlay:
+        """
+        Generates a basic overlay
+
+        :param origin: The position of the overlay in the world
+        :type origin: :class:`Vertex`
+        :param texture: The name of the texture (ex: "tools/toolsnodraw")
+        :type texture: :obj:`str`
+        :param angle: The rotation of the overlay in the world
+        :type angle: :class:`Vertex`
+        :return: A generated overlay
+        :rtype: :class:`InfoOverlay`
+        """
+        s = InfoOverlay({"classname": InfoOverlay.SUBNAME})
+        s.origin = origin
+        s.texture = texture
+        s.angles = angle
+        s.add_sides(*sides)
 
         s.editor = Editor()
 
@@ -2200,7 +2445,7 @@ class VMF:
         :return: The average center position of all the solids
         :rtype: :class:`Vertex`
         """
-        v = Vertex(0, 0, 0)
+        v = Vertex()
         for solid in group:
             if geo:
                 v = v + solid.center_geo

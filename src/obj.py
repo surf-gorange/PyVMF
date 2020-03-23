@@ -30,6 +30,6 @@ def obj_to_solids(filename: str, material_path: str = "", scale=64):
 
         solid.editor = Editor()
         solid.set_texture(material_path + mesh.materials[0].name[0:-3])
-        solid.rotate_x(Vertex(0, 0, 0), 90)
+        solid.rotate_x(Vertex(), 90)
 
         yield solid

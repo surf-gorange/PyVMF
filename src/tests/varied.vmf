@@ -2,7 +2,7 @@ versioninfo
 {
 	"editorversion" "400"
 	"editorbuild" "8456"
-	"mapversion" "8"
+	"mapversion" "9"
 	"formatversion" "100"
 	"prefab" "0"
 }
@@ -20,7 +20,7 @@ viewsettings
 world
 {
 	"id" "1"
-	"mapversion" "8"
+	"mapversion" "9"
 	"classname" "worldspawn"
 	"detailmaterial" "detail/detailsprites"
 	"detailvbsp" "detail.vbsp"
@@ -28,7 +28,7 @@ world
 	"skyname" "sky_dust"
 	solid
 	{
-		"id" "388"
+		"id" "401"
 		side
 		{
 			"id" "42"
@@ -97,7 +97,7 @@ world
 		}
 		editor
 		{
-			"color" "0 126 143"
+			"color" "0 168 161"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 			"cordonsolid" "1"
@@ -105,7 +105,7 @@ world
 	}
 	solid
 	{
-		"id" "390"
+		"id" "403"
 		side
 		{
 			"id" "72"
@@ -174,7 +174,7 @@ world
 		}
 		editor
 		{
-			"color" "0 126 143"
+			"color" "0 168 161"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 			"cordonsolid" "1"
@@ -182,7 +182,7 @@ world
 	}
 	solid
 	{
-		"id" "392"
+		"id" "405"
 		side
 		{
 			"id" "66"
@@ -251,7 +251,7 @@ world
 		}
 		editor
 		{
-			"color" "0 126 143"
+			"color" "0 168 161"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 			"cordonsolid" "1"
@@ -259,7 +259,7 @@ world
 	}
 	solid
 	{
-		"id" "394"
+		"id" "407"
 		side
 		{
 			"id" "60"
@@ -328,7 +328,7 @@ world
 		}
 		editor
 		{
-			"color" "0 126 143"
+			"color" "0 168 161"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 			"cordonsolid" "1"
@@ -336,7 +336,7 @@ world
 	}
 	solid
 	{
-		"id" "396"
+		"id" "409"
 		side
 		{
 			"id" "54"
@@ -405,7 +405,7 @@ world
 		}
 		editor
 		{
-			"color" "0 126 143"
+			"color" "0 168 161"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 			"cordonsolid" "1"
@@ -413,7 +413,7 @@ world
 	}
 	solid
 	{
-		"id" "398"
+		"id" "411"
 		side
 		{
 			"id" "48"
@@ -482,7 +482,7 @@ world
 		}
 		editor
 		{
-			"color" "0 126 143"
+			"color" "0 168 161"
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 			"cordonsolid" "1"
@@ -563,6 +563,20 @@ world
 			"visgroupshown" "1"
 			"visgroupautoshown" "1"
 		}
+	}
+}
+entity
+{
+	"id" "394"
+	"classname" "infodecal"
+	"texture" "asphalt/hr_c/hr_tar_a"
+	"origin" "351.698 -512 281.235"
+	editor
+	{
+		"color" "220 30 220"
+		"visgroupshown" "1"
+		"visgroupautoshown" "1"
+		"logicalpos" "[0 0]"
 	}
 }
 entity
@@ -858,8 +872,8 @@ cameras
 	"activecamera" "0"
 	camera
 	{
-		"position" "[1122.41 -628.249 808.955]"
-		"look" "[1121.66 -627.685 808.619]"
+		"position" "[165.682 -1032.56 522.747]"
+		"look" "[165.684 -1031.64 522.365]"
 	}
 }
 cordons

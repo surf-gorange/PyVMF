@@ -1,8 +1,9 @@
 from PyVMF import *
 from random import randint
+from typing import List
 
 
-def triangulate_displacement(vmf: VMF, group: list, base_triangle: Solid = None, resolution=1, height=2):
+def triangulate_displacement(vmf: VMF, group: List[Solid], base_triangle: Solid = None, resolution=1, height=2):
     if base_triangle is None:
         base_triangle = SolidGenerator.displacement_triangle(Vertex(0, 0, 0), 1, 1, height)
         base_triangle.move(0, -1, 0)
@@ -25,21 +26,18 @@ def triangulate_displacement(vmf: VMF, group: list, base_triangle: Solid = None,
     export_list = []
 
     for solid in group:
+
         solid_side = solid.get_displacement_sides()[0]
         disp = solid_side.get_displacement()
         if disp:
             matrix = disp.matrix
 
-            verts = solid_side.get_vertices()
-            rot_vector = Vector.vector_from_2_vertices(verts[1], verts[0])
-            angle = rot_vector.angle_to_origin()-90
-            rot_vertex = verts[1]
+            angle = solid_side.get_naive_rotation()
 
             # correct_size = solid.copy()
             # correct_size.rotate_z(solid.center_geo, -angle)
-            #
-            size = solid.get_size()
-            # size = Vertex(2048, 2048, 0)
+
+            size = solid.size
 
             size.divide(disp.matrix_size_fix/resolution)
 
@@ -97,33 +95,7 @@ def triangulate_displacement(vmf: VMF, group: list, base_triangle: Solid = None,
             move.z = solid.get_axis_extremity(z=True).z
 
             for trio in tris_list:
-                trio.rotate_z(center, angle)
+                trio.rotate_z(center, 0)
                 trio.move(*move.export())
 
     return export_list
-
-
-# if __name__ == "__main__":
-#     v = load_vmf("surf_pyramid.vmf")
-#
-#     all_displacements = [v.get_all_from_visgroup("8_disp"),
-#                          v.get_all_from_visgroup("4_disp"),
-#                          v.get_all_from_visgroup("2_disp"),
-#                          v.get_all_from_visgroup("0_disp")]
-#
-#     for i, quality in enumerate(all_displacements):
-#         for displacement in quality:
-#             t = triangulate_displacement(v, [displacement], resolution=2**i)
-#
-#             g = Group()
-#             g.editor = Editor()
-#             g.editor.color.random()
-#             id = g.id
-#             v.world.group.append(g)
-#
-#             for solid in t:
-#                 solid.editor.groupid = id
-#
-#             v.add_solids(*t)
-#
-#     v.export("surf_pyramid_g.vmf")
