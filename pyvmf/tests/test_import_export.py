@@ -1,6 +1,6 @@
 from tests.testing_tools import *
 import unittest
-from PyVMF import *
+from pyvmf import *
 
 
 class TestImportExport(unittest.TestCase):
