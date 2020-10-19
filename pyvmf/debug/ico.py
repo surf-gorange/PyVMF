@@ -1,4 +1,4 @@
-from PyVMF import *
+from pyvmf import *
 from obj import *
 
 v = new_vmf()

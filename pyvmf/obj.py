@@ -1,5 +1,5 @@
 from pywavefront import *
-from PyVMF import *
+from pyvmf import *
 
 
 def obj_to_solids(filename: str, material_path: str = "", scale=64):
