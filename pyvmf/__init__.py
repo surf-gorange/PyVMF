@@ -6,8 +6,8 @@ import time
 import math
 import operator
 from random import randint
-from tools import num
-from importer import *
+from .tools import num
+from .importer import *
 from typing import List, Tuple, Generator
 import warnings
 

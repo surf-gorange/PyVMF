@@ -1,5 +1,3 @@
-
-
 def num(s: str):
     """
     Tries to turn string into int or float
