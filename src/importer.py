@@ -82,13 +82,13 @@ def file_parser(file):
         extracted = []
 
         for line in vmf.readlines()[1:]:
-            if "}" in line and "message" not in line and "material" not in line:
+            if "}" in line and '"' not in line:
                 indent -= 1
                 if indent == 0:  # If indent is not 0 we know it's a child category and not a main category
                     extracted.append(t)
                 continue
 
-            if "{" in line and "message" not in line and "material" not in line:
+            if "{" in line and '"' not in line:
                 if indent > 0:  # If indent is not 0 we know it's a child category and not a main category
                     # Open curly brackets ALWAYS follow a category, so we know the previous line is the category name
                     t.add_child(previous_line, indent)
